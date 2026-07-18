@@ -6,6 +6,7 @@
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
     xmlns:vendorDtos="clr-namespace:NestHub.Application.Vendors.Dtos;assembly=NestHub.Application"
     xmlns:reviewDtos="clr-namespace:NestHub.Application.Reviews.Dtos;assembly=NestHub.Application"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:VendorProfileViewModel"
     Title="Vendor profile">
 
@@ -15,22 +16,67 @@
             <VerticalStackLayout Spacing="4" BindingContext="{Binding Vendor}" x:DataType="vendorDtos:VendorDto">
                 <Label Text="{Binding BusinessName}" FontSize="22" FontAttributes="Bold" />
                 <Label Text="{Binding Bio}" TextColor="{StaticResource Gray500}" />
-                <Label Text="{Binding TrustBadgeStatus, StringFormat='Trust badge: {0}'}" TextColor="{StaticResource NestHubOrange}" />
-                <Label Text="{Binding AverageRating, StringFormat='★ {0:0.0} average rating'}" />
+                <HorizontalStackLayout Spacing="4">
+                    <Image Source="icon_shield" HeightRequest="15" WidthRequest="15" VerticalOptions="Center" />
+                    <Label Text="{Binding TrustBadgeStatus, Converter={StaticResource TrustBadgeFormatConverter}}" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Label Text="{Binding AverageRating, Converter={StaticResource AverageRatingFormatConverter}}" />
             </VerticalStackLayout>
 
             <HorizontalStackLayout Spacing="12">
-                <Button Text="Call" Command="{Binding CallCommand}" BackgroundColor="{StaticResource NestHubNavy}" />
-                <Button Text="WhatsApp" Command="{Binding WhatsAppCommand}" BackgroundColor="{StaticResource NestHubOrange}" />
+                <Button Text="{Binding [CallButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_call" ContentLayout="Left,8" Command="{Binding CallCommand}" BackgroundColor="{StaticResource NestHubNavy}" />
+                <Button Text="{Binding [WhatsAppButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_chat" ContentLayout="Left,8" Command="{Binding WhatsAppCommand}" BackgroundColor="{StaticResource NestHubOrange}" />
+                <Button Text="{Binding [SaveButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_heart" ContentLayout="Left,8" Command="{Binding ToggleFavoriteCommand}" BackgroundColor="{StaticResource Gray400}">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding IsFavorite}" Value="True">
+                            <Setter Property="Text" Value="{Binding [SavedButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" />
+                            <Setter Property="BackgroundColor" Value="{StaticResource NestHubOrange}" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
             </HorizontalStackLayout>
 
-            <Label Text="NestHub is a discovery platform only. We do not vet or guarantee vendor service quality — all transactions are between you and the vendor directly."
+            <Button Text="{Binding [MuteButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_bell" ContentLayout="Left,8"
+                    Command="{Binding ToggleMuteCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Gray500}" HorizontalOptions="Start">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsMuted}" Value="True">
+                        <Setter Property="Text" Value="{Binding [UnmuteButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" />
+                        <Setter Property="ImageSource" Value="icon_bell_off" />
+                        <Setter Property="TextColor" Value="{StaticResource Danger}" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Label Text="{Binding [MutedNote], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource CaptionLabelStyle}" TextColor="{StaticResource Danger}" IsVisible="{Binding IsMuted}" />
+
+            <Label Text="{Binding [DiscoveryDisclaimer], Source={x:Static strings:LocalizationResourceManager.Instance}}"
                    FontSize="11" TextColor="{StaticResource Gray500}" />
 
             <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
 
-            <Label Text="Reviews from your neighbors" FontAttributes="Bold" FontSize="18" />
-            <Label Text="Shown only to residents of your own society — the most trustworthy recommendation there is." FontSize="12" TextColor="{StaticResource Gray500}" />
+            <Label Text="{Binding [VendorUpdatesHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource SubtitleLabelStyle}" />
+            <CollectionView ItemsSource="{Binding VendorBroadcasts}">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding [VendorUpdatesEmpty], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" Margin="0,8" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vendorDtos:VendorBroadcastDto">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Image Source="icon_broadcast" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                    <Label Text="{Binding Title}" Style="{StaticResource SubtitleLabelStyle}" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Message}" Style="{StaticResource BodyLabelStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+
+            <Label Text="{Binding [ReviewsFromNeighborsHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontAttributes="Bold" FontSize="18" />
+            <Label Text="{Binding [ReviewsVisibilityNote], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontSize="12" TextColor="{StaticResource Gray500}" />
 
             <CollectionView ItemsSource="{Binding NeighborReviews}" HeightRequest="260">
                 <CollectionView.ItemTemplate>
@@ -45,14 +91,14 @@
 
             <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
 
-            <Label Text="Leave a review" FontAttributes="Bold" />
+            <Label Text="{Binding [LeaveReviewHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontAttributes="Bold" />
             <HorizontalStackLayout Spacing="12">
-                <Label Text="Rating:" VerticalOptions="Center" />
+                <Label Text="{Binding [RatingLabel], Source={x:Static strings:LocalizationResourceManager.Instance}}" VerticalOptions="Center" />
                 <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding NewReviewRating}" />
                 <Label Text="{Binding NewReviewRating, StringFormat='{0} / 5'}" VerticalOptions="Center" />
             </HorizontalStackLayout>
-            <Editor Placeholder="Share your experience with your neighbors" Text="{Binding NewReviewComment}" HeightRequest="80" />
-            <Button Text="Submit review" Command="{Binding SubmitReviewCommand}" />
+            <Editor Placeholder="{Binding [ShareExperiencePlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Text="{Binding NewReviewComment}" HeightRequest="80" />
+            <Button Text="{Binding [SubmitReviewButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_check" ContentLayout="Left,8" Command="{Binding SubmitReviewCommand}" />
 
         </VerticalStackLayout>
     </ScrollView>

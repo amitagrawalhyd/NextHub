@@ -7,8 +7,11 @@ public sealed record SosRequestCreatedMessage(Guid SosRequestId, Guid SocietyId,
 
 public sealed record SosRequestClaimedMessage(Guid SosRequestId, Guid VendorId);
 
+public sealed record VendorBroadcastCreatedMessage(Guid BroadcastId, Guid VendorId, string BusinessName, string Title, string Message);
+
 /// <summary>
-/// Real-time transport for the vendor "Priority SOS Push Listener" and resident claim notifications.
+/// Real-time transport for the vendor "Priority SOS Push Listener", resident claim notifications,
+/// and resident vendor-broadcast delivery.
 /// </summary>
 public sealed class SosHubClient : IAsyncDisposable
 {
@@ -17,6 +20,7 @@ public sealed class SosHubClient : IAsyncDisposable
 
     public event Action<SosRequestCreatedMessage>? SosRequestCreated;
     public event Action<SosRequestClaimedMessage>? SosRequestClaimed;
+    public event Action<VendorBroadcastCreatedMessage>? VendorBroadcastCreated;
 
     public SosHubClient(AuthSession authSession) => _authSession = authSession;
 
@@ -39,6 +43,7 @@ public sealed class SosHubClient : IAsyncDisposable
 
         _connection.On<SosRequestCreatedMessage>("SosRequestCreated", message => SosRequestCreated?.Invoke(message));
         _connection.On<SosRequestClaimedMessage>("SosRequestClaimed", message => SosRequestClaimed?.Invoke(message));
+        _connection.On<VendorBroadcastCreatedMessage>("VendorBroadcastCreated", message => VendorBroadcastCreated?.Invoke(message));
 
         await _connection.StartAsync();
     }
@@ -48,6 +53,9 @@ public sealed class SosHubClient : IAsyncDisposable
 
     public Task JoinResidentGroupAsync(Guid residentId) =>
         _connection?.InvokeAsync("JoinResidentGroup", residentId) ?? Task.CompletedTask;
+
+    public Task JoinSocietyBroadcastGroupAsync(Guid societyId) =>
+        _connection?.InvokeAsync("JoinSocietyBroadcastGroup", societyId) ?? Task.CompletedTask;
 
     public async ValueTask DisposeAsync()
     {

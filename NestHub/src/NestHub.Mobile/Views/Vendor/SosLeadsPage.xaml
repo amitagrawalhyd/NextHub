@@ -5,26 +5,28 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
     xmlns:dtos="clr-namespace:NestHub.Application.SosRequests.Dtos;assembly=NestHub.Application"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:VendorSosLeadsViewModel"
     Title="SOS Leads">
 
     <Grid Padding="16">
         <CollectionView ItemsSource="{Binding OpenRequests}">
             <CollectionView.EmptyView>
-                <Label Text="No open urgent requests right now. New leads will appear here instantly." TextColor="{StaticResource Gray500}" HorizontalOptions="Center" VerticalOptions="Center" />
+                <Label Text="{Binding [NoOpenLeads], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" />
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="dtos:SosRequestDto">
-                    <Frame Padding="12" Margin="0,6" CornerRadius="10" BorderColor="{StaticResource NestHubOrange}">
+                    <Border Style="{StaticResource CardStyle}">
                         <VerticalStackLayout Spacing="6">
                             <Label Text="{Binding Category}" FontAttributes="Bold" FontSize="16" TextColor="{StaticResource NestHubOrange}" />
-                            <Label Text="{Binding Description}" />
-                            <Label Text="{Binding CreatedDateTimeUtc, StringFormat='Reported {0:g} UTC'}" FontSize="11" TextColor="{StaticResource Gray500}" />
-                            <Button Text="Claim this lead"
+                            <Label Text="{Binding Description}" Style="{StaticResource BodyLabelStyle}" />
+                            <Label Text="{Binding CreatedDateTimeUtc, Converter={StaticResource ReportedFormatConverter}}" Style="{StaticResource CaptionLabelStyle}" />
+                            <Button Text="{Binding [ClaimLeadButton], Source={x:Static strings:LocalizationResourceManager.Instance}}"
+                                    ImageSource="icon_flag" ContentLayout="Left,8"
                                     Command="{Binding BindingContext.ClaimCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                     CommandParameter="{Binding .}" />
                         </VerticalStackLayout>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

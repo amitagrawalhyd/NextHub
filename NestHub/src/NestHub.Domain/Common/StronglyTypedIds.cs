@@ -59,3 +59,39 @@ public readonly record struct CategoryId(Guid Value)
     public static CategoryId New() => new(Guid.NewGuid());
     public override string ToString() => Value.ToString();
 }
+
+public readonly record struct VendorSocietyCoverageId(Guid Value)
+{
+    public static VendorSocietyCoverageId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}
+
+public readonly record struct AnnouncementId(Guid Value)
+{
+    public static AnnouncementId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}
+
+public readonly record struct EmergencyContactId(Guid Value)
+{
+    public static EmergencyContactId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}
+
+public readonly record struct VendorFavoriteId(Guid Value)
+{
+    public static VendorFavoriteId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}
+
+public readonly record struct VendorMuteId(Guid Value)
+{
+    public static VendorMuteId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}
+
+public readonly record struct VendorBroadcastId(Guid Value)
+{
+    public static VendorBroadcastId New() => new(Guid.NewGuid());
+    public override string ToString() => Value.ToString();
+}

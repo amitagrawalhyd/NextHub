@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HomeGreeting" xml:space="preserve">
+    <value>Hi, {0}</value>
+  </data>
+  <data name="HomeBlockUnit" xml:space="preserve">
+    <value>Block {0} - {1}</value>
+  </data>
+  <data name="HomeTagline" xml:space="preserve">
+    <value>Find a trusted vendor recommended by your own neighbors.</value>
+  </data>
+  <data name="SearchVendorsButton" xml:space="preserve">
+    <value>Search vendors</value>
+  </data>
+  <data name="SosCalloutTitle" xml:space="preserve">
+    <value>Need urgent help?</value>
+  </data>
+  <data name="SosCalloutBody" xml:space="preserve">
+    <value>Use the SOS tab to broadcast an urgent request to vendors serving your society.</value>
+  </data>
+  <data name="VendorUpdatesHeader" xml:space="preserve">
+    <value>Vendor Updates</value>
+  </data>
+  <data name="NoVendorUpdates" xml:space="preserve">
+    <value>No vendor updates for your society yet.</value>
+  </data>
+  <data name="MyFavoritesHeader" xml:space="preserve">
+    <value>My Favorites</value>
+  </data>
+  <data name="NoFavorites" xml:space="preserve">
+    <value>No favorites yet. Tap the heart on a vendor's profile to save it here.</value>
+  </data>
+  <data name="NoAnnouncements" xml:space="preserve">
+    <value>No society announcements right now.</value>
+  </data>
+  <data name="OfflineBanner" xml:space="preserve">
+    <value>Offline — showing saved results</value>
+  </data>
+  <data name="ChooseLanguage" xml:space="preserve">
+    <value>Choose language</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SignInTagline" xml:space="preserve">
+    <value>Your neighborhood, trusted.</value>
+  </data>
+  <data name="PhoneNumberPlaceholder" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="HelpLink" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="PrivacyPolicyLink" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="TermsLink" xml:space="preserve">
+    <value>Terms</value>
+  </data>
+  <data name="SosTitle" xml:space="preserve">
+    <value>Urgent Request</value>
+  </data>
+  <data name="SosDescription" xml:space="preserve">
+    <value>Broadcast your emergency to every approved vendor serving your society in the matching category. They'll be notified instantly.</value>
+  </data>
+  <data name="DescribeEmergencyPlaceholder" xml:space="preserve">
+    <value>Describe the emergency (e.g. 'Leaking pipe in kitchen!')</value>
+  </data>
+  <data name="SendSosButton" xml:space="preserve">
+    <value>Send SOS</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>Emergency Contacts</value>
+  </data>
+  <data name="CallButton" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="CategoryPickerTitle" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search by name, service, or category (e.g. electrician)</value>
+  </data>
+  <data name="NoVendorsFound" xml:space="preserve">
+    <value>No vendors match yet. Try a different search or category.</value>
+  </data>
+  <data name="FeaturedLabel" xml:space="preserve">
+    <value>Featured</value>
+  </data>
+  <data name="TrustBadgeFormat" xml:space="preserve">
+    <value>Trust badge: {0}</value>
+  </data>
+  <data name="TierAllLabel" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="TierInHouseLabel" xml:space="preserve">
+    <value>In-house</value>
+  </data>
+  <data name="TierNearbyLabel" xml:space="preserve">
+    <value>Nearby</value>
+  </data>
+  <data name="TierOtherLabel" xml:space="preserve">
+    <value>Other Society</value>
+  </data>
+  <data name="WhatsAppButton" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SavedButton" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="DiscoveryDisclaimer" xml:space="preserve">
+    <value>NestHub is a discovery platform only. We do not vet or guarantee vendor service quality — all transactions are between you and the vendor directly.</value>
+  </data>
+  <data name="ReviewsFromNeighborsHeader" xml:space="preserve">
+    <value>Reviews from your neighbors</value>
+  </data>
+  <data name="ReviewsVisibilityNote" xml:space="preserve">
+    <value>Shown only to residents of your own society — the most trustworthy recommendation there is.</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>★ {0:0.0} average rating</value>
+  </data>
+  <data name="LeaveReviewHeader" xml:space="preserve">
+    <value>Leave a review</value>
+  </data>
+  <data name="RatingLabel" xml:space="preserve">
+    <value>Rating:</value>
+  </data>
+  <data name="ShareExperiencePlaceholder" xml:space="preserve">
+    <value>Share your experience with your neighbors</value>
+  </data>
+  <data name="SubmitReviewButton" xml:space="preserve">
+    <value>Submit review</value>
+  </data>
+  <data name="NoRecentActivity" xml:space="preserve">
+    <value>No recent activity yet.</value>
+  </data>
+  <data name="RegisteringAsVendorLabel" xml:space="preserve">
+    <value>I'm registering as a vendor</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="OnboardingTitle" xml:space="preserve">
+    <value>Tell us where you live</value>
+  </data>
+  <data name="OnboardingSubtitle" xml:space="preserve">
+    <value>This unlocks neighbor-verified reviews and the SOS feature for your society.</value>
+  </data>
+  <data name="SocietyPickerTitle" xml:space="preserve">
+    <value>Society</value>
+  </data>
+  <data name="BlockNumberPlaceholder" xml:space="preserve">
+    <value>Block number (e.g. A)</value>
+  </data>
+  <data name="FlatNumberPlaceholder" xml:space="preserve">
+    <value>Flat number (e.g. 204)</value>
+  </data>
+  <data name="YourNamePlaceholder" xml:space="preserve">
+    <value>Your name</value>
+  </data>
+  <data name="SubscriptionFormat" xml:space="preserve">
+    <value>Subscription: {0}</value>
+  </data>
+  <data name="ApprovalStatusFormat" xml:space="preserve">
+    <value>Approval status: {0}</value>
+  </data>
+  <data name="Last30DaysHeader" xml:space="preserve">
+    <value>Last 30 days</value>
+  </data>
+  <data name="MyBroadcastsHeader" xml:space="preserve">
+    <value>My Broadcasts</value>
+  </data>
+  <data name="PostUpdateButton" xml:space="preserve">
+    <value>Post update</value>
+  </data>
+  <data name="NoBroadcastsPosted" xml:space="preserve">
+    <value>No broadcasts posted yet. Share an update or offer with residents in your coverage area.</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="NoOpenLeads" xml:space="preserve">
+    <value>No open urgent requests right now. New leads will appear here instantly.</value>
+  </data>
+  <data name="ClaimLeadButton" xml:space="preserve">
+    <value>Claim this lead</value>
+  </data>
+  <data name="VendorOnboardingTitle" xml:space="preserve">
+    <value>Set up your business profile</value>
+  </data>
+  <data name="VendorOnboardingSubtitle" xml:space="preserve">
+    <value>An admin will review and approve your profile before it goes live to residents.</value>
+  </data>
+  <data name="BusinessNamePlaceholder" xml:space="preserve">
+    <value>Business name</value>
+  </data>
+  <data name="WhatsAppNumberPlaceholder" xml:space="preserve">
+    <value>WhatsApp number</value>
+  </data>
+  <data name="BioPlaceholder" xml:space="preserve">
+    <value>Short bio / about your services</value>
+  </data>
+  <data name="SocietiesYouServeHeader" xml:space="preserve">
+    <value>Societies you serve</value>
+  </data>
+  <data name="SocietiesYouServeNote" xml:space="preserve">
+    <value>SOS leads and search visibility are limited to the societies you select here.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Submit for approval</value>
+  </data>
+  <data name="PostBroadcastIntro" xml:space="preserve">
+    <value>Share an update or offer with residents in your coverage area.</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="PostButton" xml:space="preserve">
+    <value>Post</value>
+  </data>
+  <data name="PostBroadcastErrorMessage" xml:space="preserve">
+    <value>Couldn't post your update. Please try again.</value>
+  </data>
+  <data name="PostedFormat" xml:space="preserve">
+    <value>Posted {0:g} UTC</value>
+  </data>
+  <data name="ReportedFormat" xml:space="preserve">
+    <value>Reported {0:g} UTC</value>
+  </data>
+  <data name="ProfileViewsLabel" xml:space="preserve">
+    <value>Profile Views</value>
+  </data>
+  <data name="CallsLabel" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="WhatsAppLabel" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="MuteButton" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="UnmuteButton" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="MutedNote" xml:space="preserve">
+    <value>Muted — you won't see updates from this vendor.</value>
+  </data>
+  <data name="VendorUpdatesEmpty" xml:space="preserve">
+    <value>No updates from this vendor yet.</value>
+  </data>
+</root>

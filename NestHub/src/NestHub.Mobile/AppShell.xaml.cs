@@ -1,4 +1,5 @@
 using NestHub.Mobile.Views;
+using NestHub.Mobile.Views.Compliance;
 using NestHub.Mobile.Views.Resident;
 using NestHub.Mobile.Views.Vendor;
 
@@ -14,5 +15,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("VendorProfile", typeof(VendorProfilePage));
         Routing.RegisterRoute("ResidentOnboarding", typeof(ResidentOnboardingPage));
         Routing.RegisterRoute("VendorOnboarding", typeof(VendorOnboardingPage));
+        Routing.RegisterRoute("PrivacyPolicy", typeof(PrivacyPolicyPage));
+        Routing.RegisterRoute("TermsAndConditions", typeof(TermsAndConditionsPage));
+        Routing.RegisterRoute("Help", typeof(HelpPage));
+        Routing.RegisterRoute("Notifications", typeof(NotificationsPage));
+        Routing.RegisterRoute("PostBroadcast", typeof(PostBroadcastPage));
     }
 }

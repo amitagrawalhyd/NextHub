@@ -1,7 +1,9 @@
 # NestHub Deployment Guide
 
 This guide covers provisioning SQL Server, hosting the API and Admin portal under IIS, and
-producing production-ready mobile binaries for Android and iOS.
+producing production-ready mobile binaries for Android and iOS. Section 5 covers an alternative,
+low-cost path to a real deployment: Azure App Service Free (F1) tier + a serverless Azure SQL
+Database.
 
 ## 1. SQL Server Provisioning
 
@@ -240,3 +242,133 @@ project directly.
       Android-emulator development) to the deployed API's public HTTPS URL before publishing.
 - [ ] Register at least one Admin user directly against the database (or temporarily relax the
       registration endpoint) since there is no public "become an admin" flow by design.
+
+## 5. Azure Free-Tier Deployment (App Service F1 + Serverless Azure SQL)
+
+A lower-cost alternative to section 2 for a demo/dev-facing deployment: `NestHub.API` on an
+Azure App Service **Free (F1)** plan, backed by a **serverless** Azure SQL Database that
+auto-pauses when idle. This is what backs the currently deployed instance at
+`https://nesthub-api-amitagrawal.azurewebsites.net/` (also the address `NestHub.Mobile`'s
+`AppConfig.ApiBaseAddress` points at by default — see `src/NestHub.Mobile/Services/AppConfig.cs`).
+
+**Trade-offs of this path, by design of the Free tier:**
+- No "Always On" — the app unloads after ~20 minutes without requests and cold-starts
+  (10-30s) on the next one.
+- Azure SQL free-tier ("use-free-limit") database offer is one per subscription; if it's already
+  claimed by another project, the database here is billed as ordinary serverless GP (auto-pause
+  keeps compute cost near-zero when idle; storage for a demo-sized DB is a small fraction of a
+  dollar/month).
+- No custom domain / no deployment slots on F1 — only the `*.azurewebsites.net` hostname, which
+  gets a free managed TLS certificate automatically.
+
+### 5.1 Resources
+
+```powershell
+az group create -n rg-nesthub -l centralindia
+
+az appservice plan create -g rg-nesthub -n plan-nesthub-api --sku F1 --is-linux -l centralindia
+az webapp create -g rg-nesthub -p plan-nesthub-api -n <globally-unique-app-name> --runtime "DOTNETCORE:8.0"
+az webapp config set -g rg-nesthub -n <app-name> --web-sockets-enabled true   # required for /hubs/sos (SignalR)
+az webapp update -g rg-nesthub -n <app-name> --https-only true
+
+az sql server create -g rg-nesthub -n <globally-unique-sql-server-name> -l centralindia `
+  --admin-user <admin-login> --admin-password <generated-strong-password>
+az sql server firewall-rule create -g rg-nesthub -s <sql-server-name> -n AllowAzureServices `
+  --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
+az sql server firewall-rule create -g rg-nesthub -s <sql-server-name> -n AllowDeployMachine `
+  --start-ip-address <your-public-ip> --end-ip-address <your-public-ip>   # temporary, for step 5.2
+
+az sql db create -g rg-nesthub -s <sql-server-name> -n NestHub `
+  --edition GeneralPurpose --compute-model Serverless --family Gen5 --capacity 1 --auto-pause-delay 60
+```
+
+### 5.2 Schema + seed data
+
+Run directly against the newly created `NestHub` database — no edits needed to either script.
+`Schema.sql`'s `IF DB_ID(N'NestHub') IS NULL … CREATE DATABASE` block is a no-op here (Azure SQL
+Database sees the current database's own id), and its `USE [NestHub]` is a same-database no-op,
+both valid on Azure SQL Database:
+
+```powershell
+sqlcmd -S <sql-server-name>.database.windows.net -d NestHub -U <admin-login> -P <password> -i database\Schema.sql
+sqlcmd -S <sql-server-name>.database.windows.net -d NestHub -U <admin-login> -P <password> -i database\dummy.sql
+```
+
+### 5.3 App configuration
+
+Set configuration as **Application Settings** (`--settings`), not via App Service's separate
+"Connection Strings" blade — that blade injects a `SQLAZURECONNSTR_` prefix that ASP.NET Core's
+default configuration provider does not remap, so the app would silently fail to pick it up.
+Using the `__` (double-underscore) separator matches `ConnectionStrings:NestHubDatabase` and
+`Jwt:*` in `appsettings.json` exactly:
+
+```powershell
+az webapp config appsettings set -g rg-nesthub -n <app-name> --settings `
+  "ConnectionStrings__NestHubDatabase=Server=tcp:<sql-server-name>.database.windows.net,1433;Database=NestHub;User ID=<admin-login>;Password=<password>;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" `
+  "Jwt__Secret=<long-random-secret>" `
+  "Jwt__Issuer=NestHub" `
+  "Jwt__Audience=NestHubClients" `
+  "Jwt__ExpiryMinutes=60" `
+  "ASPNETCORE_ENVIRONMENT=Production"
+```
+
+### 5.4 Publish and deploy
+
+```powershell
+dotnet publish src\NestHub.API\NestHub.API.csproj -c Release -o .\publish
+```
+
+Zip `.\publish` for `az webapp deploy`. **Do not use PowerShell's `Compress-Archive`** (or
+`System.IO.Compression.ZipFile.CreateFromDirectory` on Windows) here — both preserve Windows
+backslash path separators inside the zip entry names (e.g. `runtimes\unix\lib\...`), which the
+Linux-hosted Kudu deployment engine's `rsync` step rejects (`failed to stat ... Invalid argument`).
+Build the zip with forward-slash entry names instead, e.g. via Python:
+
+```python
+import os, zipfile
+with zipfile.ZipFile("deploy.zip", "w", zipfile.ZIP_DEFLATED) as zf:
+    for root, _, files in os.walk("publish"):
+        for f in files:
+            full = os.path.join(root, f)
+            zf.write(full, os.path.relpath(full, "publish").replace(os.sep, "/"))
+```
+
+```powershell
+az webapp deploy -g rg-nesthub -n <app-name> --src-path deploy.zip --type zip
+```
+
+### 5.6 NestHub.Admin on the same free plan
+
+`NestHub.Admin` doesn't call `NestHub.API` at all — like the API, it talks **directly** to the
+same Azure SQL Database via `AddInfrastructure` (EF Core), and does its own cookie-based sign-in
+(`AddAuthentication().AddCookie(...)`) rather than JWT. Because F1 App Service plans can host
+multiple apps within the shared free compute quota, it's deployed as a **second Web App on the
+same `plan-nesthub-api` plan** rather than provisioning another plan:
+
+```powershell
+az webapp create -g rg-nesthub -p plan-nesthub-api -n <admin-app-name> --runtime "DOTNETCORE:8.0"
+az webapp update -g rg-nesthub -n <admin-app-name> --https-only true
+
+az webapp config appsettings set -g rg-nesthub -n <admin-app-name> --settings `
+  "ConnectionStrings__NestHubDatabase=<same connection string as the API>" `
+  "Jwt__Secret=<same secret as the API — unused by Admin's own auth, kept for DI consistency>" `
+  "Jwt__Issuer=NestHub" `
+  "Jwt__Audience=NestHubClients" `
+  "ASPNETCORE_ENVIRONMENT=Production"
+```
+
+Publish/zip/deploy exactly as in 5.4/5.5 (same forward-slash zip caveat), pointing at
+`src\NestHub.Admin\NestHub.Admin.csproj`. Sign in with a seeded Admin account (`TESTING.md`) at
+`https://<admin-app-name>.azurewebsites.net/Account/Login` — the fallback authorization policy
+(`RequireRole("Admin")`) redirects any unauthenticated request straight to that login page.
+
+### 5.5 Smoke test
+
+```powershell
+curl https://<app-name>.azurewebsites.net/api/societies
+curl -X POST https://<app-name>.azurewebsites.net/api/auth/login `
+  -H "Content-Type: application/json" -d '{"phoneNumber":"9000000101","password":"Passw0rd!23"}'
+```
+
+The first should return the 3 seeded societies; the second a JWT for the seeded resident (see
+`TESTING.md` for the full seeded-account table).

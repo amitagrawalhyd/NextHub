@@ -34,6 +34,12 @@ public static class DependencyInjection
         services.AddScoped<ISosRequestRepository, SosRequestRepository>();
         services.AddScoped<IAnalyticsLogRepository, AnalyticsLogRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IVendorSocietyCoverageRepository, VendorSocietyCoverageRepository>();
+        services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+        services.AddScoped<IEmergencyContactRepository, EmergencyContactRepository>();
+        services.AddScoped<IVendorFavoriteRepository, VendorFavoriteRepository>();
+        services.AddScoped<IVendorBroadcastRepository, VendorBroadcastRepository>();
+        services.AddScoped<IVendorMuteRepository, VendorMuteRepository>();
 
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();

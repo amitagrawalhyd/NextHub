@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using NestHub.Admin.Common;
 using NestHub.Application.Common.Interfaces;
 using NestHub.Domain.Enums;
 using NestHub.Domain.Repositories;
@@ -51,6 +52,9 @@ public sealed class LoginModel : PageModel
             new(ClaimTypes.Role, UserType.Admin.ToString()),
             new(ClaimTypes.MobilePhone, phoneNumber.Value)
         };
+
+        if (user.SocietyId is { } societyId)
+            claims.Add(ClaimsPrincipalExtensions.SocietyIdClaim(societyId.Value));
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));

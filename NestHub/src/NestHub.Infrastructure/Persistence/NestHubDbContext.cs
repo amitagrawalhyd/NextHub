@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NestHub.Domain.Analytics;
+using NestHub.Domain.Announcements;
 using NestHub.Domain.Categories;
+using NestHub.Domain.EmergencyContacts;
 using NestHub.Domain.Residents;
 using NestHub.Domain.Reviews;
 using NestHub.Domain.Societies;
@@ -26,6 +28,12 @@ public sealed class NestHubDbContext : DbContext
     public DbSet<SosClaim> SosClaims => Set<SosClaim>();
     public DbSet<AnalyticsLog> AnalyticsLogs => Set<AnalyticsLog>();
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<VendorSocietyCoverage> VendorSocietyCoverages => Set<VendorSocietyCoverage>();
+    public DbSet<Announcement> Announcements => Set<Announcement>();
+    public DbSet<EmergencyContact> EmergencyContacts => Set<EmergencyContact>();
+    public DbSet<VendorFavorite> VendorFavorites => Set<VendorFavorite>();
+    public DbSet<VendorBroadcast> VendorBroadcasts => Set<VendorBroadcast>();
+    public DbSet<VendorMute> VendorMutes => Set<VendorMute>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

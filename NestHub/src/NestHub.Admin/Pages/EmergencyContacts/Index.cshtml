@@ -1,0 +1,63 @@
+@page
+@model NestHub.Admin.Pages.EmergencyContacts.IndexModel
+@{
+    ViewData["Title"] = "Emergency Contacts";
+}
+
+<h1>Emergency Contacts</h1>
+<p class="text-muted">Per-society contacts (watchman, society office, etc.) &mdash; Residents see these on the SOS screen with one-tap calling.</p>
+
+<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
+    @if (Model.ScopedSocietyId is null)
+    {
+        <div class="col-12">
+            <select asp-for="NewSocietyId" class="form-select">
+                <option value="">Select a society&hellip;</option>
+                @foreach (var society in Model.Societies)
+                {
+                    <option value="@society.Id">@society.Name</option>
+                }
+            </select>
+        </div>
+    }
+    <div class="col-6">
+        <input asp-for="NewName" class="form-control" placeholder="Name" />
+    </div>
+    <div class="col-6">
+        <input asp-for="NewRole" class="form-control" placeholder="Role (e.g. Watchman)" />
+    </div>
+    <div class="col-8">
+        <input asp-for="NewPhoneNumber" class="form-control" placeholder="Phone number" />
+    </div>
+    <div class="col-4">
+        <button type="submit" class="btn btn-primary w-100">Add</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Society</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Phone</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contact in Model.Contacts)
+        {
+            <tr>
+                <td>@contact.SocietyName</td>
+                <td>@contact.Name</td>
+                <td>@contact.Role</td>
+                <td>@contact.PhoneNumber</td>
+                <td>
+                    <form method="post" asp-page-handler="Delete" asp-route-emergencyContactId="@contact.Id" class="d-inline" onsubmit="return confirm('Delete this contact?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

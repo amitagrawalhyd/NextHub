@@ -37,10 +37,24 @@ public static class DatabaseSeeder
         foreach (var name in categoryNames)
             context.Categories.Add(Category.Create(name));
 
-        // ---- Admin ----
+        // ---- Admin (Central — unrestricted access across every society) ----
         var admin = User.Register(PhoneNumber.Create("9000000001"), Email.Create("admin@nesthub.example"), passwordHash, UserType.Admin);
         admin.MarkVerified();
         context.Users.Add(admin);
+
+        // ---- Society Admins (each scoped to manage only their own society) ----
+        var societyAdminSeeds = new (string Phone, string Email, Society Society)[]
+        {
+            ("9000000011", "admin.lakeview@nesthub.example", lakeview),
+            ("9000000012", "admin.greenmeadows@nesthub.example", greenMeadows),
+            ("9000000013", "admin.myhome@nesthub.example", myHome),
+        };
+        foreach (var (phone, email, society) in societyAdminSeeds)
+        {
+            var societyAdmin = User.Register(PhoneNumber.Create(phone), Email.Create(email), passwordHash, UserType.Admin, society.Id);
+            societyAdmin.MarkVerified();
+            context.Users.Add(societyAdmin);
+        }
 
         // ---- Residents (spread across societies) ----
         var residentSeeds = new (string Phone, string Name, Society Society, string Block, string Flat)[]

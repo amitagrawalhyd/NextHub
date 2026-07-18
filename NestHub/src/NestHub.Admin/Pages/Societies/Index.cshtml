@@ -5,19 +5,26 @@
 }
 
 <h1>Societies</h1>
-<p class="text-muted">Register the gated communities and apartment societies onboarded onto NestHub.</p>
+@if (Model.ScopedSocietyId is null)
+{
+    <p class="text-muted">Register the gated communities and apartment societies onboarded onto NestHub.</p>
 
-<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
-    <div class="col-12">
-        <input asp-for="NewSociety.Name" class="form-control" placeholder="Society name" />
-    </div>
-    <div class="col-12">
-        <input asp-for="NewSociety.Address" class="form-control" placeholder="Address" />
-    </div>
-    <div class="col-6">
-        <button type="submit" class="btn btn-primary">Register Society</button>
-    </div>
-</form>
+    <form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
+        <div class="col-12">
+            <input asp-for="NewSociety.Name" class="form-control" placeholder="Society name" />
+        </div>
+        <div class="col-12">
+            <input asp-for="NewSociety.Address" class="form-control" placeholder="Address" />
+        </div>
+        <div class="col-6">
+            <button type="submit" class="btn btn-primary">Register Society</button>
+        </div>
+    </form>
+}
+else
+{
+    <p class="text-muted">Your society's details. Contact a Central Admin to register additional societies.</p>
+}
 
 <table class="table table-striped align-middle">
     <thead>

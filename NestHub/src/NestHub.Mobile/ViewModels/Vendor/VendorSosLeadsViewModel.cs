@@ -15,7 +15,7 @@ public sealed partial class VendorSosLeadsViewModel : ObservableObject
     private readonly SosHubClient _sosHubClient;
 
     private Guid? _vendorId;
-    private Guid? _societyId;
+    private List<Guid> _coveredSocietyIds = new();
     private const string DefaultCategory = "Plumbing";
 
     public VendorSosLeadsViewModel(ApiClient apiClient, AuthSession authSession, SosHubClient sosHubClient)
@@ -44,22 +44,22 @@ public sealed partial class VendorSosLeadsViewModel : ObservableObject
 
             _vendorId = vendor.Id;
 
-            // In a full build-out the vendor would pick their society coverage during onboarding;
-            // for now leads are polled/streamed for the vendor's first listed service category.
             var category = vendor.Services.Count > 0 ? vendor.Services[0].Category : DefaultCategory;
 
-            var societies = await _apiClient.GetSocietiesAsync();
-            if (societies.Count == 0) return;
+            _coveredSocietyIds = (await _apiClient.GetVendorCoverageAsync(vendor.Id)).ToList();
+            if (_coveredSocietyIds.Count == 0) return;
 
-            _societyId = societies[0].Id;
-
-            var requests = await _apiClient.GetOpenSosRequestsAsync(_societyId.Value, category);
             OpenRequests.Clear();
-            foreach (var request in requests)
-                OpenRequests.Add(request);
-
             await _sosHubClient.ConnectAsync();
-            await _sosHubClient.JoinSocietyCategoryGroupAsync(_societyId.Value, category);
+
+            foreach (var societyId in _coveredSocietyIds)
+            {
+                var requests = await _apiClient.GetOpenSosRequestsAsync(societyId, category);
+                foreach (var request in requests)
+                    OpenRequests.Add(request);
+
+                await _sosHubClient.JoinSocietyCategoryGroupAsync(societyId, category);
+            }
         }
         finally
         {
@@ -80,7 +80,7 @@ public sealed partial class VendorSosLeadsViewModel : ObservableObject
     {
         MainThread.BeginInvokeOnMainThread(async () =>
         {
-            if (_societyId != message.SocietyId) return;
+            if (!_coveredSocietyIds.Contains(message.SocietyId)) return;
 
             var requests = await _apiClient.GetOpenSosRequestsAsync(message.SocietyId, message.Category);
             var newRequest = requests.FirstOrDefault(r => r.Id == message.SosRequestId);

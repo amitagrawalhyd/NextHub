@@ -13,6 +13,9 @@ public sealed class SosHub : Hub
 
     public Task JoinResidentGroup(Guid residentId) =>
         Groups.AddToGroupAsync(Context.ConnectionId, GroupNames.Resident(residentId));
+
+    public Task JoinSocietyBroadcastGroup(Guid societyId) =>
+        Groups.AddToGroupAsync(Context.ConnectionId, GroupNames.SocietyBroadcast(societyId));
 }
 
 public static class GroupNames
@@ -20,4 +23,6 @@ public static class GroupNames
     public static string SocietyCategory(Guid societyId, string category) => $"society:{societyId}:category:{category.ToLowerInvariant()}";
 
     public static string Resident(Guid residentId) => $"resident:{residentId}";
+
+    public static string SocietyBroadcast(Guid societyId) => $"society:{societyId}:broadcasts";
 }

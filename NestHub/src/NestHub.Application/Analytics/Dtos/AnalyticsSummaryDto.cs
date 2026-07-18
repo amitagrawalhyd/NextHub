@@ -7,3 +7,11 @@ public sealed record AnalyticsSummaryDto(
     int WhatsAppClicks,
     DateTime FromUtc,
     DateTime ToUtc);
+
+public sealed record TopVendorDto(
+    Guid VendorId,
+    string BusinessName,
+    int ProfileViews,
+    int CallClicks,
+    int WhatsAppClicks,
+    int TotalEngagements);

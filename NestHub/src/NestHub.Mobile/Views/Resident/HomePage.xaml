@@ -3,23 +3,100 @@
     x:Class="NestHub.Mobile.Views.Resident.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="NestHub">
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
+    xmlns:announcementDtos="clr-namespace:NestHub.Application.Announcements.Dtos;assembly=NestHub.Application"
+    xmlns:vendorDtos="clr-namespace:NestHub.Application.Vendors.Dtos;assembly=NestHub.Application"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
+    x:DataType="viewmodels:HomeViewModel"
+    Title="Home">
 
-    <VerticalStackLayout Padding="24" Spacing="16">
-        <HorizontalStackLayout Spacing="0">
-            <Label Text="Nest" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource NestHubNavy}" />
-            <Label Text="Hub" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource NestHubOrange}" />
-        </HorizontalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <VerticalStackLayout Grid.Column="0" Spacing="0">
+                    <Label Text="{Binding Greeting}" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource NestHubNavy}" />
+                    <Label Text="{Binding BlockUnitText}" FontSize="13" TextColor="{StaticResource Gray500}" />
+                </VerticalStackLayout>
+                <ImageButton Grid.Column="1" Source="icon_language" HeightRequest="24" WidthRequest="24"
+                             BackgroundColor="Transparent" Clicked="OnLanguageClicked" Margin="0,0,12,0" />
+                <ImageButton Grid.Column="2" Source="icon_bell" HeightRequest="26" WidthRequest="26"
+                             BackgroundColor="Transparent" Command="{Binding OpenNotificationsCommand}" />
+            </Grid>
 
-        <Label Text="Find a trusted vendor recommended by your own neighbors." FontSize="16" TextColor="{StaticResource Gray500}" />
+            <Label Text="{Binding [HomeTagline], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontSize="16" TextColor="{StaticResource Gray500}" />
 
-        <Button Text="Search vendors" Clicked="OnSearchVendorsClicked" />
+            <Label Text="{Binding [OfflineBanner], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource CaptionLabelStyle}" TextColor="{StaticResource Danger}" IsVisible="{Binding IsOffline}" />
 
-        <Frame BorderColor="{StaticResource NestHubOrange}" Padding="16" CornerRadius="12">
-            <VerticalStackLayout Spacing="8">
-                <Label Text="Need urgent help?" FontAttributes="Bold" />
-                <Label Text="Use the SOS tab to broadcast an urgent request to vendors serving your society." />
-            </VerticalStackLayout>
-        </Frame>
-    </VerticalStackLayout>
+            <Button Text="{Binding [SearchVendorsButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_search_button" ContentLayout="Left,8" Clicked="OnSearchVendorsClicked" />
+
+            <Frame BorderColor="{StaticResource NestHubOrange}" Padding="16" CornerRadius="12">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding [SosCalloutTitle], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontAttributes="Bold" />
+                    <Label Text="{Binding [SosCalloutBody], Source={x:Static strings:LocalizationResourceManager.Instance}}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <CollectionView ItemsSource="{Binding Announcements}">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding [NoAnnouncements], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" Margin="0,8" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="announcementDtos:AnnouncementDto">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Image Source="icon_announcement" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                    <Label Text="{Binding Title}" Style="{StaticResource SubtitleLabelStyle}" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Body}" Style="{StaticResource BodyLabelStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="{Binding [VendorUpdatesHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource SubtitleLabelStyle}" />
+            <CollectionView ItemsSource="{Binding Broadcasts}">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding [NoVendorUpdates], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" Margin="0,8" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vendorDtos:VendorBroadcastDto">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Image Source="icon_broadcast" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                    <Label Text="{Binding BusinessName}" FontSize="12" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Title}" Style="{StaticResource SubtitleLabelStyle}" />
+                                <Label Text="{Binding Message}" Style="{StaticResource BodyLabelStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="{Binding [MyFavoritesHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource SubtitleLabelStyle}" />
+            <CollectionView ItemsSource="{Binding FavoriteVendors}">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding [NoFavorites], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" Margin="0,8" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vendorDtos:VendorDto">
+                        <Grid Padding="0,6">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding BindingContext.OpenVendorCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="8">
+                                <Image Source="icon_heart_filled" HeightRequest="16" WidthRequest="16" VerticalOptions="Center" />
+                                <Label Text="{Binding BusinessName}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

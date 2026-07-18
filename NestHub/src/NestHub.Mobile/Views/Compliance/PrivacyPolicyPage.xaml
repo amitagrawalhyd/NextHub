@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Compliance.PrivacyPolicyPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Privacy Policy">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Label Text="Privacy Policy" Style="{StaticResource TitleLabelStyle}" HorizontalOptions="Start" HorizontalTextAlignment="Start" />
+            <Label Text="Last updated: 2026" Style="{StaticResource CaptionLabelStyle}" />
+
+            <Label Text="What we collect" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="NestHub collects the phone number and password you register with, your society and unit details, and — for Vendors — a business profile and WhatsApp number. If you use SOS, we record the request category, description, and your society at the time you send it. If you set a society location, we store its latitude/longitude to power the Nearby/Local vendor tier." />
+
+            <Label Text="How we use it" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="Your phone number and society identify you to vendors and neighbors within your community. SOS requests are shared with vendors serving your society so they can respond. Vendor broadcasts are delivered only to residents of societies that vendor covers. We do not sell your data or share it with anyone outside the NestHub platform." />
+
+            <Label Text="Reviews and ratings" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="Reviews you post are visible to other residents and the vendor being reviewed. Flagged reviews are checked by an Admin before removal." />
+
+            <Label Text="Your choices" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="You can remove a vendor from your favorites at any time, and Vendors can delete their own broadcasts. Contact your society Admin to request account deletion or a copy of your data." />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

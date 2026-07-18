@@ -36,6 +36,17 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.IsActive).IsRequired();
         builder.Property(u => u.CreatedDateTimeUtc).HasColumnName("CreatedDateTime").IsRequired();
 
+        builder.Property(u => u.SocietyId)
+            .HasConversion(
+                id => id == null ? (Guid?)null : id.Value.Value,
+                value => value == null ? (SocietyId?)null : new SocietyId(value.Value))
+            .HasColumnName("SocietyId");
+
+        builder.HasOne<Domain.Societies.Society>()
+            .WithMany()
+            .HasForeignKey(u => u.SocietyId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Ignore(u => u.DomainEvents);
     }
 }

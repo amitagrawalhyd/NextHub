@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Compliance.TermsAndConditionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Terms and Conditions">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Label Text="Terms and Conditions" Style="{StaticResource TitleLabelStyle}" HorizontalOptions="Start" HorizontalTextAlignment="Start" />
+            <Label Text="Last updated: 2026" Style="{StaticResource CaptionLabelStyle}" />
+
+            <Label Text="The NestHub role" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="NestHub connects Residents of a society with local Vendors and provides an SOS channel for urgent requests. NestHub does not employ Vendors and is not a party to any service, payment, or dispute between a Resident and a Vendor." />
+
+            <Label Text="Vendor listings and trust badges" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="Vendor profiles, coverage areas, and trust badges are provided for reference. Approval and trust badges reflect Admin review at a point in time and are not a guarantee of a Vendor's future conduct or work quality. Always verify a Vendor before engaging their services for anything sensitive." />
+
+            <Label Text="SOS is not emergency services" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="The SOS feature broadcasts your request to Vendors covering your society so they can respond quickly. It is not a substitute for police, fire, or medical emergency services — for a life-threatening emergency, always contact your local emergency number first." />
+
+            <Label Text="Reviews and conduct" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="Reviews must reflect a genuine experience. Fake or abusive reviews may be removed by an Admin, and accounts posting them may be suspended. Vendor Broadcasts must be accurate, non-spam updates about the Vendor's own business." />
+
+            <Label Text="Changes to these terms" Style="{StaticResource SubtitleLabelStyle}" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="We may update these terms as NestHub adds features. Continued use of the app after an update means you accept the revised terms." />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

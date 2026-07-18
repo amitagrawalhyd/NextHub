@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Resident.NotificationsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
+    x:DataType="viewmodels:NotificationsViewModel"
+    Title="Notifications">
+
+    <Grid Padding="16">
+        <CollectionView ItemsSource="{Binding Items}">
+            <CollectionView.EmptyView>
+                <Label Text="{Binding [NoRecentActivity], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewmodels:NotificationItem">
+                    <Border Style="{StaticResource CardStyle}">
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="6">
+                                <Image Source="icon_broadcast" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                <Label Text="{Binding SourceName}" FontSize="12" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                                <Label Text="{Binding CreatedDateTimeUtc, StringFormat='· {0:g} UTC'}" FontSize="11" TextColor="{StaticResource Gray500}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding Title}" Style="{StaticResource SubtitleLabelStyle}" />
+                            <Label Text="{Binding Body}" Style="{StaticResource BodyLabelStyle}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

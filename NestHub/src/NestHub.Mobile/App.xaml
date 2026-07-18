@@ -13,6 +13,16 @@
 
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <converters:TierToLabelConverter x:Key="TierToLabelConverter" />
+            <converters:TierToIconConverter x:Key="TierToIconConverter" />
+            <converters:TierToColorConverter x:Key="TierToColorConverter" />
+            <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
+            <converters:TrustBadgeFormatConverter x:Key="TrustBadgeFormatConverter" />
+            <converters:AverageRatingFormatConverter x:Key="AverageRatingFormatConverter" />
+            <converters:SubscriptionFormatConverter x:Key="SubscriptionFormatConverter" />
+            <converters:ApprovalStatusFormatConverter x:Key="ApprovalStatusFormatConverter" />
+            <converters:PostedFormatConverter x:Key="PostedFormatConverter" />
+            <converters:ReportedFormatConverter x:Key="ReportedFormatConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

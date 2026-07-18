@@ -31,3 +31,6 @@ coverage*.info
 appsettings.*.local.json
 *.pfx
 *.snk
+*.keystore
+*.jks
+signing/

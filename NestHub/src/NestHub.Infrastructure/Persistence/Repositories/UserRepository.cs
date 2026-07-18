@@ -21,5 +21,8 @@ public sealed class UserRepository : IUserRepository
     public Task<bool> ExistsByPhoneNumberAsync(PhoneNumber phoneNumber, CancellationToken cancellationToken = default) =>
         _context.Users.AnyAsync(u => u.PhoneNumber == phoneNumber, cancellationToken);
 
+    public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await _context.Users.ToListAsync(cancellationToken);
+
     public void Add(User user) => _context.Users.Add(user);
 }

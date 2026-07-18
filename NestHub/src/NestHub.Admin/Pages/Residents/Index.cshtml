@@ -1,0 +1,43 @@
+@page
+@model NestHub.Admin.Pages.Residents.IndexModel
+@{
+    ViewData["Title"] = "Residents";
+}
+
+<h1>Residents</h1>
+<p class="text-muted">Every onboarded resident across all societies. Reset a password or suspend an account from <a asp-page="/Users/Index">User Accounts</a>.</p>
+
+@if (Model.Residents.Count == 0)
+{
+    <p class="text-muted empty-state">No residents have onboarded yet.</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Society</th>
+                <th>Block</th>
+                <th>Flat</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var resident in Model.Residents)
+            {
+                <tr>
+                    <td>@resident.Name</td>
+                    <td>@resident.PhoneNumber</td>
+                    <td>@resident.SocietyName</td>
+                    <td>@resident.BlockNumber</td>
+                    <td>@resident.FlatNumber</td>
+                    <td>
+                        <span class="badge @(resident.IsActive ? "bg-success" : "bg-secondary")">@(resident.IsActive ? "Active" : "Deactivated")</span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -15,14 +15,14 @@
         Shell.NavBarIsVisible="False" />
 
     <TabBar Route="ResidentShell">
-        <ShellContent Route="Home" Title="Home" ContentTemplate="{DataTemplate resident:HomePage}" />
-        <ShellContent Route="Search" Title="Search" ContentTemplate="{DataTemplate resident:VendorSearchPage}" />
-        <ShellContent Route="Sos" Title="SOS" ContentTemplate="{DataTemplate resident:SosPage}" />
+        <ShellContent Route="Home" Title="Home" Icon="icon_home" ContentTemplate="{DataTemplate resident:HomePage}" />
+        <ShellContent Route="Search" Title="Search" Icon="icon_search" ContentTemplate="{DataTemplate resident:VendorSearchPage}" />
+        <ShellContent Route="Sos" Title="SOS" Icon="icon_sos" ContentTemplate="{DataTemplate resident:SosPage}" />
     </TabBar>
 
     <TabBar Route="VendorShell">
-        <ShellContent Route="Dashboard" Title="Dashboard" ContentTemplate="{DataTemplate vendor:DashboardPage}" />
-        <ShellContent Route="SosLeads" Title="SOS Leads" ContentTemplate="{DataTemplate vendor:SosLeadsPage}" />
+        <ShellContent Route="Dashboard" Title="Dashboard" Icon="icon_dashboard" ContentTemplate="{DataTemplate vendor:DashboardPage}" />
+        <ShellContent Route="SosLeads" Title="SOS Leads" Icon="icon_sosleads" ContentTemplate="{DataTemplate vendor:SosLeadsPage}" />
     </TabBar>
 
 </Shell>

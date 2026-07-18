@@ -10,7 +10,7 @@
 <h4 class="mt-4">Pending Approval (@Model.PendingVendors.Count)</h4>
 @if (Model.PendingVendors.Count == 0)
 {
-    <p class="text-muted">No vendors are currently awaiting approval.</p>
+    <p class="text-muted empty-state">No vendors are currently awaiting approval.</p>
 }
 else
 {
@@ -44,7 +44,7 @@ else
 <h4 class="mt-5">Approved Vendors (@Model.ApprovedVendors.Count)</h4>
 @if (Model.ApprovedVendors.Count == 0)
 {
-    <p class="text-muted">No approved vendors yet.</p>
+    <p class="text-muted empty-state">No approved vendors yet.</p>
 }
 else
 {
@@ -74,6 +74,15 @@ else
                                 <option value="None">None</option>
                             </select>
                             <button type="submit" class="btn btn-warning btn-sm">Award</button>
+                        </form>
+                        @if (vendor.SubscriptionTier == "Free")
+                        {
+                            <form method="post" asp-page-handler="UpgradeSubscription" asp-route-vendorId="@vendor.Id" class="d-inline">
+                                <button type="submit" class="btn btn-outline-primary btn-sm">Upgrade to Premium</button>
+                            </form>
+                        }
+                        <form method="post" asp-page-handler="SetFeatured" asp-route-vendorId="@vendor.Id" asp-route-isFeatured="@(!vendor.IsFeatured)" class="d-inline">
+                            <button type="submit" class="btn @(vendor.IsFeatured ? "btn-secondary" : "btn-outline-secondary") btn-sm">@(vendor.IsFeatured ? "Unfeature" : "Feature")</button>
                         </form>
                     </td>
                 </tr>

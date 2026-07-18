@@ -1,8 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using NestHub.Admin.Common;
 using NestHub.Application.Vendors.Commands.ApproveVendor;
 using NestHub.Application.Vendors.Commands.AwardTrustBadge;
+using NestHub.Application.Vendors.Commands.SetVendorFeatured;
+using NestHub.Application.Vendors.Commands.UpgradeVendorSubscription;
 using NestHub.Application.Vendors.Dtos;
 using NestHub.Application.Vendors.Queries.GetPendingVendorApprovals;
 using NestHub.Application.Vendors.Queries.SearchVendors;
@@ -10,7 +12,7 @@ using NestHub.Domain.Enums;
 
 namespace NestHub.Admin.Pages.Vendors;
 
-public sealed class IndexModel : PageModel
+public sealed class IndexModel : CentralAdminOnlyPageModel
 {
     private readonly ISender _sender;
 
@@ -33,6 +35,18 @@ public sealed class IndexModel : PageModel
     public async Task<IActionResult> OnPostAwardBadgeAsync(Guid vendorId, TrustBadgeStatus badge)
     {
         await _sender.Send(new AwardTrustBadgeCommand(vendorId, badge));
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpgradeSubscriptionAsync(Guid vendorId)
+    {
+        await _sender.Send(new UpgradeVendorSubscriptionCommand(vendorId));
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostSetFeaturedAsync(Guid vendorId, bool isFeatured)
+    {
+        await _sender.Send(new SetVendorFeaturedCommand(vendorId, isFeatured));
         return RedirectToPage();
     }
 

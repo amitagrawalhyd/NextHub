@@ -1,2 +1,186 @@
 @page
 @model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h1>Dashboard</h1>
+@if (Model.Summary.IsSocietyScoped)
+{
+    <p class="text-muted">A snapshot of <strong>@Model.Summary.SocietyName</strong> right now.</p>
+}
+else
+{
+    <p class="text-muted">A snapshot of NestHub right now.</p>
+}
+
+<div class="row g-3 mb-4">
+    @if (!Model.Summary.IsSocietyScoped)
+    {
+        <div class="col-6 col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fs-3 fw-bold">@Model.Summary.TotalSocieties</div>
+                    <div class="text-muted small">Societies</div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-6 col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="fs-3 fw-bold">@Model.Summary.TotalResidents</div>
+                <div class="text-muted small">Residents</div>
+            </div>
+        </div>
+    </div>
+    @if (!Model.Summary.IsSocietyScoped)
+    {
+        <div class="col-6 col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fs-3 fw-bold">@Model.Summary.ApprovedVendors</div>
+                    <div class="text-muted small">Approved Vendors</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center border-warning">
+                <div class="card-body">
+                    <div class="fs-3 fw-bold">@Model.Summary.PendingVendorApprovals</div>
+                    <div class="text-muted small">Pending Approval</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fs-3 fw-bold">@Model.Summary.FeaturedVendors</div>
+                    <div class="text-muted small">Featured Vendors</div>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-6 col-md-3">
+        <div class="card text-center border-danger">
+            <div class="card-body">
+                <div class="fs-3 fw-bold">@Model.Summary.OpenSosRequests</div>
+                <div class="text-muted small">Open SOS Requests</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <div class="fs-3 fw-bold">@Model.Summary.FlaggedReviews</div>
+                <div class="text-muted small">Flagged Reviews</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <h4>SOS Requests — Last 7 Days @(Model.Summary.IsSocietyScoped ? $"({Model.Summary.SocietyName})" : "(platform-wide)")</h4>
+        <div class="card">
+            <div class="card-body">
+                <canvas id="sosTrendChart" height="90"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Summary.IsSocietyScoped)
+{
+    <div class="row g-4">
+        <div class="col-12 col-lg-6">
+            <h4>Most Favorited Vendors</h4>
+            @if (Model.Summary.TopFavoritedVendors.Count == 0)
+            {
+                <p class="text-muted empty-state">No residents have favorited a vendor yet.</p>
+            }
+            else
+            {
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Favorites</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vendor in Model.Summary.TopFavoritedVendors)
+                        {
+                            <tr>
+                                <td>@vendor.BusinessName</td>
+                                <td>@vendor.FavoriteCount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+        <div class="col-12 col-lg-6">
+            <h4>Top Performing Vendors <span class="text-muted small fw-normal">(last 30 days)</span></h4>
+            @if (Model.TopVendorsByEngagement.Count == 0)
+            {
+                <p class="text-muted empty-state">No vendor engagement recorded in the last 30 days.</p>
+            }
+            else
+            {
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Views</th>
+                            <th>Calls</th>
+                            <th>WhatsApp</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var vendor in Model.TopVendorsByEngagement)
+                        {
+                            <tr>
+                                <td>@vendor.BusinessName</td>
+                                <td>@vendor.ProfileViews</td>
+                                <td>@vendor.CallClicks</td>
+                                <td>@vendor.WhatsAppClicks</td>
+                                <td><span class="badge bg-primary">@vendor.TotalEngagements</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        const sosTrendLabels = @Html.Raw(Json.Serialize(Model.Summary.SosTrend.Select(d => d.Date.ToString("MMM d"))));
+        const sosTrendData = @Html.Raw(Json.Serialize(Model.Summary.SosTrend.Select(d => d.Count)));
+
+        new Chart(document.getElementById('sosTrendChart'), {
+            type: 'line',
+            data: {
+                labels: sosTrendLabels,
+                datasets: [{
+                    label: 'SOS Requests',
+                    data: sosTrendData,
+                    borderColor: '#F2872E',
+                    backgroundColor: 'rgba(242, 135, 46, 0.15)',
+                    fill: true,
+                    tension: 0.3,
+                    pointBackgroundColor: '#1F5C99',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    </script>
+}

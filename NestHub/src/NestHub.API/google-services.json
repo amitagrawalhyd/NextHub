@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "565521748652",
+    "project_id": "nesthub-c8908",
+    "storage_bucket": "nesthub-c8908.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565521748652:android:15befbd5c8bb5592a68509",
+        "android_client_info": {
+          "package_name": "com.companyname.nesthub.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhcGtd5KA0Fx_tY7OLgIU8FAIqIcpLJLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

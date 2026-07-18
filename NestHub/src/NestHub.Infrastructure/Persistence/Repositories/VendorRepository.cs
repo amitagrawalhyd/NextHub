@@ -32,5 +32,11 @@ public sealed class VendorRepository : IVendorRepository
     public async Task<IReadOnlyList<Vendor>> GetAllApprovedAsync(CancellationToken cancellationToken = default) =>
         await _context.Vendors.Include(v => v.Services).Where(v => v.IsApproved).ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<Vendor>> GetByIdsAsync(IEnumerable<VendorId> ids, CancellationToken cancellationToken = default)
+    {
+        var idList = ids.ToList();
+        return await _context.Vendors.Where(v => idList.Contains(v.Id)).ToListAsync(cancellationToken);
+    }
+
     public void Add(Vendor vendor) => _context.Vendors.Add(vendor);
 }

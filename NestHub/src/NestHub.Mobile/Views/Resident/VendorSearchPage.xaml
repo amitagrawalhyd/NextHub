@@ -5,34 +5,111 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
     xmlns:dtos="clr-namespace:NestHub.Application.Vendors.Dtos;assembly=NestHub.Application"
+    xmlns:sys="clr-namespace:System;assembly=netstandard"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:VendorSearchViewModel"
     Title="Find a vendor">
 
-    <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="12">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,*" Padding="16" RowSpacing="10">
 
         <SearchBar Grid.Row="0"
-                   Placeholder="Search by name, service, or category (e.g. electrician)"
+                   Placeholder="{Binding [SearchPlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}"
                    Text="{Binding SearchQuery}"
                    SearchCommand="{Binding SearchCommand}" />
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Vendors}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="dtos:VendorDto">
-                    <Grid Padding="0,8">
-                        <Border Padding="12" StrokeShape="RoundRectangle 10">
+        <Label Grid.Row="1" Text="{Binding [OfflineBanner], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource CaptionLabelStyle}"
+               TextColor="{StaticResource Danger}" IsVisible="{Binding IsOffline}" />
+
+        <!-- Tier filter chips -->
+        <ScrollView Grid.Row="2" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding TierChips}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="sys:String">
+                        <Border StrokeShape="RoundRectangle 16" Padding="12,6"
+                                Stroke="{StaticResource Primary}" StrokeThickness="1"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceElevatedDark}}">
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer
-                                    Command="{Binding BindingContext.OpenVendorCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    Command="{Binding BindingContext.FilterByTierCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                     CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="{Binding BusinessName}" FontAttributes="Bold" FontSize="16" />
-                                <Label Text="{Binding Bio}" TextColor="{StaticResource Gray500}" LineBreakMode="TailTruncation" MaxLines="2" />
-                                <Label Text="{Binding TrustBadgeStatus, StringFormat='Trust badge: {0}'}" FontSize="12" TextColor="{StaticResource NestHubOrange}" />
-                                <Label Text="{Binding AverageRating, StringFormat='★ {0:0.0}'}" FontSize="12" />
-                            </VerticalStackLayout>
+                            <Label Text="{Binding ., Converter={StaticResource TierToLabelConverter}}" FontSize="12" TextColor="{StaticResource Primary}" />
                         </Border>
-                    </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Recent + trending chips, shown only while the search box is empty -->
+        <VerticalStackLayout Grid.Row="3" Spacing="6" IsVisible="{Binding IsSearchEmpty}">
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" IsVisible="{Binding RecentSearches.Count, Converter={StaticResource CountToBoolConverter}}">
+                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding RecentSearches}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="sys:String">
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6" Stroke="{StaticResource Gray300}" StrokeThickness="1">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding BindingContext.SearchByChipCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding .}" FontSize="12" TextColor="{StaticResource Gray600}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding TrendingCategories}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="sys:String">
+                            <Border StrokeShape="RoundRectangle 16" Padding="12,6" Stroke="{StaticResource NestHubOrange}" StrokeThickness="1">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding BindingContext.SearchByChipCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding .}" FontSize="12" TextColor="{StaticResource NestHubOrange}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="4" ItemsSource="{Binding Vendors}">
+            <CollectionView.EmptyView>
+                <Label Text="{Binding [NoVendorsFound], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:VendorDto">
+                    <Border Style="{StaticResource CardStyle}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding BindingContext.OpenVendorCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <HorizontalStackLayout Spacing="6">
+                                <Border StrokeShape="RoundRectangle 8" Padding="6,2" Stroke="{Binding Tier, Converter={StaticResource TierToColorConverter}}" StrokeThickness="1">
+                                    <HorizontalStackLayout Spacing="3">
+                                        <Image Source="{Binding Tier, Converter={StaticResource TierToIconConverter}}" HeightRequest="12" WidthRequest="12" VerticalOptions="Center" />
+                                        <Label Text="{Binding Tier, Converter={StaticResource TierToLabelConverter}}" FontSize="10" TextColor="{Binding Tier, Converter={StaticResource TierToColorConverter}}" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                                <HorizontalStackLayout Spacing="4" IsVisible="{Binding IsFeatured}">
+                                    <Image Source="icon_star_featured" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                    <Label Text="{Binding [FeaturedLabel], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontSize="11" FontAttributes="Bold" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding BusinessName}" Style="{StaticResource SubtitleLabelStyle}" />
+                            <Label Text="{Binding Bio}" Style="{StaticResource BodyLabelStyle}" LineBreakMode="TailTruncation" MaxLines="2" />
+                            <HorizontalStackLayout Spacing="4">
+                                <Image Source="icon_shield" HeightRequest="14" WidthRequest="14" VerticalOptions="Center" />
+                                <Label Text="{Binding TrustBadgeStatus, Converter={StaticResource TrustBadgeFormatConverter}}" FontSize="12" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Label Text="{Binding AverageRating, StringFormat='★ {0:0.0}'}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

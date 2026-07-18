@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:VendorOnboardingViewModel"
     Title="Set up your business"
     Shell.NavBarIsVisible="False">
@@ -11,14 +12,27 @@
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="16">
 
-            <Label Text="Set up your business profile" FontSize="22" FontAttributes="Bold" />
-            <Label Text="An admin will review and approve your profile before it goes live to residents." TextColor="{StaticResource Gray500}" />
+            <Label Text="{Binding [VendorOnboardingTitle], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontSize="22" FontAttributes="Bold" />
+            <Label Text="{Binding [VendorOnboardingSubtitle], Source={x:Static strings:LocalizationResourceManager.Instance}}" TextColor="{StaticResource Gray500}" />
 
-            <Entry Placeholder="Business name" Text="{Binding BusinessName}" />
-            <Entry Placeholder="WhatsApp number" Keyboard="Telephone" Text="{Binding WhatsAppNumber}" />
-            <Editor Placeholder="Short bio / about your services" Text="{Binding Bio}" HeightRequest="100" />
+            <Entry Placeholder="{Binding [BusinessNamePlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Text="{Binding BusinessName}" />
+            <Entry Placeholder="{Binding [WhatsAppNumberPlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Keyboard="Telephone" Text="{Binding WhatsAppNumber}" />
+            <Editor Placeholder="{Binding [BioPlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Text="{Binding Bio}" HeightRequest="100" />
 
-            <Button Text="Submit for approval" Command="{Binding SaveCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <Label Text="{Binding [SocietiesYouServeHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontAttributes="Bold" Margin="0,8,0,0" />
+            <Label Text="{Binding [SocietiesYouServeNote], Source={x:Static strings:LocalizationResourceManager.Instance}}" FontSize="12" TextColor="{StaticResource Gray500}" />
+            <CollectionView ItemsSource="{Binding Societies}" HeightRequest="160">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewmodels:SelectableSociety">
+                        <HorizontalStackLayout Spacing="8" Padding="0,4">
+                            <CheckBox IsChecked="{Binding IsSelected}" />
+                            <Label Text="{Binding Society.Name}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="{Binding [SubmitForApprovalButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_check" ContentLayout="Left,8" Command="{Binding SaveCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
 
         </VerticalStackLayout>

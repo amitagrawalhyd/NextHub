@@ -1,0 +1,66 @@
+@page
+@model NestHub.Admin.Pages.Announcements.IndexModel
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<h1>Announcements</h1>
+<p class="text-muted">Post notices to a society &mdash; maintenance windows, events, or general updates. Residents see these on their Home screen while active.</p>
+
+<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
+    @if (Model.ScopedSocietyId is null)
+    {
+        <div class="col-12">
+            <select asp-for="NewSocietyId" class="form-select">
+                <option value="">Select a society&hellip;</option>
+                @foreach (var society in Model.Societies)
+                {
+                    <option value="@society.Id">@society.Name</option>
+                }
+            </select>
+        </div>
+    }
+    <div class="col-12">
+        <input asp-for="NewTitle" class="form-control" placeholder="Title" />
+    </div>
+    <div class="col-12">
+        <textarea asp-for="NewBody" class="form-control" placeholder="Body" rows="2"></textarea>
+    </div>
+    <div class="col-8">
+        <input asp-for="NewExpiresAtUtc" type="datetime-local" class="form-control" />
+        <div class="form-text">Optional &mdash; leave blank for a notice with no expiry.</div>
+    </div>
+    <div class="col-4">
+        <button type="submit" class="btn btn-primary w-100">Post</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Society</th>
+            <th>Title</th>
+            <th>Body</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var announcement in Model.Announcements)
+        {
+            <tr>
+                <td>@announcement.SocietyName</td>
+                <td>@announcement.Title</td>
+                <td>@announcement.Body</td>
+                <td>
+                    <span class="badge @(announcement.IsActive ? "bg-success" : "bg-secondary")">@(announcement.IsActive ? "Active" : "Expired")</span>
+                </td>
+                <td>
+                    <form method="post" asp-page-handler="Delete" asp-route-announcementId="@announcement.Id" class="d-inline" onsubmit="return confirm('Delete this announcement?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

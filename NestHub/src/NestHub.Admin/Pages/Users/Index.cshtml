@@ -1,0 +1,50 @@
+@page
+@model NestHub.Admin.Pages.Users.IndexModel
+@{
+    ViewData["Title"] = "User Accounts";
+}
+
+<h1>User Accounts</h1>
+<p class="text-muted">Every account across all roles &mdash; reset a forgotten password or suspend an account.</p>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Phone</th>
+            <th>Type</th>
+            <th>Verified</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.PhoneNumber</td>
+                <td>@user.UserType</td>
+                <td>
+                    @(user.IsVerified ? "Yes" : "No")
+                    @if (!user.IsVerified)
+                    {
+                        <form method="post" asp-page-handler="Verify" asp-route-userId="@user.Id" class="d-inline">
+                            <button type="submit" class="btn btn-outline-success btn-sm">Mark verified</button>
+                        </form>
+                    }
+                </td>
+                <td>
+                    <span class="badge @(user.IsActive ? "bg-success" : "bg-secondary")">@(user.IsActive ? "Active" : "Deactivated")</span>
+                </td>
+                <td>
+                    <form method="post" asp-page-handler="ResetPassword" asp-route-userId="@user.Id" class="d-inline" onsubmit="return confirm('Reset password for @user.PhoneNumber?');">
+                        <input type="text" name="newPassword" class="form-control form-control-sm d-inline w-auto" placeholder="New password" required minlength="6" />
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Reset password</button>
+                    </form>
+                    <form method="post" asp-page-handler="SetActive" asp-route-userId="@user.Id" asp-route-isActive="@(!user.IsActive)" class="d-inline">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">@(user.IsActive ? "Deactivate" : "Activate")</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

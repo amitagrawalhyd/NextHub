@@ -16,4 +16,6 @@ public sealed record VendorDto(
     string TrustBadgeStatus,
     double AverageRating,
     bool IsApproved,
-    IReadOnlyList<ServiceDto> Services);
+    bool IsFeatured,
+    IReadOnlyList<ServiceDto> Services,
+    string Tier = "Other");

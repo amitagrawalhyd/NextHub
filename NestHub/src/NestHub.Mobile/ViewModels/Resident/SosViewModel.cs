@@ -1,7 +1,10 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NestHub.Application.EmergencyContacts.Dtos;
 using NestHub.Application.SosRequests.Commands.CreateSosRequest;
 using NestHub.Mobile.Services.Api;
+using NestHub.Mobile.Services.Native;
 using NestHub.Mobile.Services.Realtime;
 
 namespace NestHub.Mobile.ViewModels.Resident;
@@ -10,11 +13,13 @@ public sealed partial class SosViewModel : ObservableObject
 {
     private readonly ApiClient _apiClient;
     private readonly SosHubClient _sosHubClient;
+    private readonly IPhoneDialerService _phoneDialerService;
 
-    public SosViewModel(ApiClient apiClient, SosHubClient sosHubClient)
+    public SosViewModel(ApiClient apiClient, SosHubClient sosHubClient, IPhoneDialerService phoneDialerService)
     {
         _apiClient = apiClient;
         _sosHubClient = sosHubClient;
+        _phoneDialerService = phoneDialerService;
         _sosHubClient.SosRequestClaimed += OnSosRequestClaimed;
     }
 
@@ -30,6 +35,8 @@ public sealed partial class SosViewModel : ObservableObject
     [ObservableProperty]
     private string? _confirmationMessage;
 
+    public ObservableCollection<EmergencyContactDto> EmergencyContacts { get; } = new();
+
     private Guid? _residentId;
     private Guid? _societyId;
 
@@ -42,9 +49,17 @@ public sealed partial class SosViewModel : ObservableObject
         _residentId = residentProfile.Id;
         _societyId = residentProfile.SocietyId;
 
+        var contacts = await _apiClient.GetEmergencyContactsAsync(residentProfile.SocietyId);
+        EmergencyContacts.Clear();
+        foreach (var contact in contacts)
+            EmergencyContacts.Add(contact);
+
         await _sosHubClient.ConnectAsync();
         await _sosHubClient.JoinResidentGroupAsync(_residentId.Value);
     }
+
+    [RelayCommand]
+    private void CallContact(EmergencyContactDto contact) => _phoneDialerService.Call(contact.PhoneNumber);
 
     [RelayCommand]
     private async Task SendSosAsync()

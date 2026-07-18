@@ -33,4 +33,18 @@ public sealed class SosNotificationService : INotificationService
             .Group(GroupNames.Resident(residentId.Value))
             .SendAsync("SosRequestClaimed", new { sosRequestId = sosRequestId.Value, vendorId = vendorId.Value }, cancellationToken);
     }
+
+    public async Task BroadcastVendorUpdateAsync(Guid broadcastId, VendorId vendorId, string businessName, string title, string message, IEnumerable<SocietyId> societyIds, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Broadcasting vendor update {BroadcastId} from vendor {VendorId}", broadcastId, vendorId);
+
+        var payload = new { broadcastId, vendorId = vendorId.Value, businessName, title, message };
+
+        foreach (var societyId in societyIds)
+        {
+            await _hubContext.Clients
+                .Group(GroupNames.SocietyBroadcast(societyId.Value))
+                .SendAsync("VendorBroadcastCreated", payload, cancellationToken);
+        }
+    }
 }

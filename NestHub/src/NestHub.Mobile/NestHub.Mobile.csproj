@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>NestHub.Mobile</ApplicationTitle>
+		<ApplicationTitle>NestHub</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.nesthub.mobile</ApplicationId>
@@ -41,17 +41,28 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!-- Free Provisioning (Personal Team, no paid Apple Developer account) — manual on-device
+	     debug deploys only. CodesignProvision=Automatic lets the build match whichever free
+	     provisioning profile Xcode already generated for this bundle ID on this Mac; there is no
+	     paid-account archive/App Store export path, hence ArchiveOnBuild=false. -->
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
+		<RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+		<CodesignKey>Apple Development</CodesignKey>
+		<CodesignProvision>Automatic</CodesignProvision>
+		<CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+		<ArchiveOnBuild>false</ArchiveOnBuild>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#1F5C99" />
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.png" Color="#1F5C99" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#1F5C99" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\nesthub_logo_full.png" Color="#FFFFFF" BaseSize="300,300" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		
+
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 

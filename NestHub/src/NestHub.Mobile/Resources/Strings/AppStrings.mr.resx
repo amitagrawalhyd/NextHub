@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HomeGreeting" xml:space="preserve">
+    <value>नमस्कार, {0}</value>
+  </data>
+  <data name="HomeBlockUnit" xml:space="preserve">
+    <value>ब्लॉक {0} - {1}</value>
+  </data>
+  <data name="HomeTagline" xml:space="preserve">
+    <value>तुमच्या शेजाऱ्यांनी शिफारस केलेला विश्वासार्ह विक्रेता शोधा.</value>
+  </data>
+  <data name="SearchVendorsButton" xml:space="preserve">
+    <value>विक्रेते शोधा</value>
+  </data>
+  <data name="SosCalloutTitle" xml:space="preserve">
+    <value>तातडीने मदत हवी आहे?</value>
+  </data>
+  <data name="SosCalloutBody" xml:space="preserve">
+    <value>तुमच्या सोसायटीला सेवा देणाऱ्या विक्रेत्यांना त्वरित विनंती पाठवण्यासाठी SOS टॅब वापरा.</value>
+  </data>
+  <data name="VendorUpdatesHeader" xml:space="preserve">
+    <value>विक्रेता अपडेट्स</value>
+  </data>
+  <data name="NoVendorUpdates" xml:space="preserve">
+    <value>तुमच्या सोसायटीसाठी अजून कोणतेही विक्रेता अपडेट्स नाहीत.</value>
+  </data>
+  <data name="MyFavoritesHeader" xml:space="preserve">
+    <value>माझे आवडते</value>
+  </data>
+  <data name="NoFavorites" xml:space="preserve">
+    <value>अजून कोणतेही आवडते नाहीत. येथे जतन करण्यासाठी विक्रेत्याच्या प्रोफाइलवरील हृदय चिन्हावर टॅप करा.</value>
+  </data>
+  <data name="NoAnnouncements" xml:space="preserve">
+    <value>सध्या कोणतीही सोसायटी घोषणा नाही.</value>
+  </data>
+  <data name="OfflineBanner" xml:space="preserve">
+    <value>ऑफलाइन — जतन केलेले परिणाम दाखवत आहे</value>
+  </data>
+  <data name="ChooseLanguage" xml:space="preserve">
+    <value>भाषा निवडा</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>रद्द करा</value>
+  </data>
+  <data name="SignInTagline" xml:space="preserve">
+    <value>तुमचा परिसर, विश्वासार्ह.</value>
+  </data>
+  <data name="PhoneNumberPlaceholder" xml:space="preserve">
+    <value>फोन नंबर</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>पासवर्ड</value>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>साइन इन करा</value>
+  </data>
+  <data name="CreateAccountButton" xml:space="preserve">
+    <value>खाते तयार करा</value>
+  </data>
+  <data name="HelpLink" xml:space="preserve">
+    <value>मदत</value>
+  </data>
+  <data name="PrivacyPolicyLink" xml:space="preserve">
+    <value>गोपनीयता धोरण</value>
+  </data>
+  <data name="TermsLink" xml:space="preserve">
+    <value>अटी</value>
+  </data>
+  <data name="SosTitle" xml:space="preserve">
+    <value>तातडीची विनंती</value>
+  </data>
+  <data name="SosDescription" xml:space="preserve">
+    <value>तुमची आणीबाणी तुमच्या सोसायटीला सेवा देणाऱ्या संबंधित श्रेणीतील प्रत्येक मंजूर विक्रेत्याला प्रसारित करा. त्यांना त्वरित सूचित केले जाईल.</value>
+  </data>
+  <data name="DescribeEmergencyPlaceholder" xml:space="preserve">
+    <value>आणीबाणीचे वर्णन करा (उदा. 'स्वयंपाकघरात पाईप लीक होत आहे!')</value>
+  </data>
+  <data name="SendSosButton" xml:space="preserve">
+    <value>SOS पाठवा</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>आणीबाणी संपर्क</value>
+  </data>
+  <data name="CallButton" xml:space="preserve">
+    <value>कॉल करा</value>
+  </data>
+  <data name="CategoryPickerTitle" xml:space="preserve">
+    <value>श्रेणी</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>नाव, सेवा किंवा श्रेणीनुसार शोधा (उदा. इलेक्ट्रिशियन)</value>
+  </data>
+  <data name="NoVendorsFound" xml:space="preserve">
+    <value>अजून कोणतेही विक्रेते सापडले नाहीत. वेगळा शोध किंवा श्रेणी वापरून पहा.</value>
+  </data>
+  <data name="FeaturedLabel" xml:space="preserve">
+    <value>वैशिष्ट्यीकृत</value>
+  </data>
+  <data name="TrustBadgeFormat" xml:space="preserve">
+    <value>ट्रस्ट बॅज: {0}</value>
+  </data>
+  <data name="TierAllLabel" xml:space="preserve">
+    <value>सर्व</value>
+  </data>
+  <data name="TierInHouseLabel" xml:space="preserve">
+    <value>इन-हाऊस</value>
+  </data>
+  <data name="TierNearbyLabel" xml:space="preserve">
+    <value>जवळपास</value>
+  </data>
+  <data name="TierOtherLabel" xml:space="preserve">
+    <value>इतर सोसायटी</value>
+  </data>
+  <data name="WhatsAppButton" xml:space="preserve">
+    <value>व्हॉट्सअॅप</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>जतन करा</value>
+  </data>
+  <data name="SavedButton" xml:space="preserve">
+    <value>जतन केले</value>
+  </data>
+  <data name="DiscoveryDisclaimer" xml:space="preserve">
+    <value>नेस्टहब हे फक्त एक शोध प्लॅटफॉर्म आहे. आम्ही विक्रेता सेवेच्या गुणवत्तेची पडताळणी किंवा हमी देत नाही — सर्व व्यवहार थेट तुमच्या आणि विक्रेत्यामध्ये होतात.</value>
+  </data>
+  <data name="ReviewsFromNeighborsHeader" xml:space="preserve">
+    <value>तुमच्या शेजाऱ्यांच्या समीक्षा</value>
+  </data>
+  <data name="ReviewsVisibilityNote" xml:space="preserve">
+    <value>फक्त तुमच्या स्वतःच्या सोसायटीतील रहिवाशांना दाखवले जाते — तिथली सर्वात विश्वासार्ह शिफारस.</value>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>★ {0:0.0} सरासरी रेटिंग</value>
+  </data>
+  <data name="LeaveReviewHeader" xml:space="preserve">
+    <value>समीक्षा लिहा</value>
+  </data>
+  <data name="RatingLabel" xml:space="preserve">
+    <value>रेटिंग:</value>
+  </data>
+  <data name="ShareExperiencePlaceholder" xml:space="preserve">
+    <value>तुमचा अनुभव तुमच्या शेजाऱ्यांसोबत शेअर करा</value>
+  </data>
+  <data name="SubmitReviewButton" xml:space="preserve">
+    <value>समीक्षा सबमिट करा</value>
+  </data>
+  <data name="NoRecentActivity" xml:space="preserve">
+    <value>अजून कोणतीही अलीकडील क्रियाकलाप नाही.</value>
+  </data>
+  <data name="RegisteringAsVendorLabel" xml:space="preserve">
+    <value>मी विक्रेता म्हणून नोंदणी करत आहे</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>नोंदणी करा</value>
+  </data>
+  <data name="OnboardingTitle" xml:space="preserve">
+    <value>तुम्ही कुठे राहता ते आम्हाला सांगा</value>
+  </data>
+  <data name="OnboardingSubtitle" xml:space="preserve">
+    <value>हे तुमच्या सोसायटीसाठी शेजारी-सत्यापित समीक्षा आणि SOS वैशिष्ट्य अनलॉक करते.</value>
+  </data>
+  <data name="SocietyPickerTitle" xml:space="preserve">
+    <value>सोसायटी</value>
+  </data>
+  <data name="BlockNumberPlaceholder" xml:space="preserve">
+    <value>ब्लॉक नंबर (उदा. A)</value>
+  </data>
+  <data name="FlatNumberPlaceholder" xml:space="preserve">
+    <value>फ्लॅट नंबर (उदा. 204)</value>
+  </data>
+  <data name="YourNamePlaceholder" xml:space="preserve">
+    <value>तुमचे नाव</value>
+  </data>
+  <data name="SubscriptionFormat" xml:space="preserve">
+    <value>सबस्क्रिप्शन: {0}</value>
+  </data>
+  <data name="ApprovalStatusFormat" xml:space="preserve">
+    <value>मंजुरी स्थिती: {0}</value>
+  </data>
+  <data name="Last30DaysHeader" xml:space="preserve">
+    <value>गेले 30 दिवस</value>
+  </data>
+  <data name="MyBroadcastsHeader" xml:space="preserve">
+    <value>माझे प्रसारण</value>
+  </data>
+  <data name="PostUpdateButton" xml:space="preserve">
+    <value>अपडेट पोस्ट करा</value>
+  </data>
+  <data name="NoBroadcastsPosted" xml:space="preserve">
+    <value>अजून कोणतेही प्रसारण पोस्ट केलेले नाही. तुमच्या कव्हरेज क्षेत्रातील रहिवाशांसोबत अपडेट किंवा ऑफर शेअर करा.</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>हटवा</value>
+  </data>
+  <data name="NoOpenLeads" xml:space="preserve">
+    <value>सध्या कोणतीही तातडीची विनंती उघडी नाही. नवीन लीड्स लगेच येथे दिसतील.</value>
+  </data>
+  <data name="ClaimLeadButton" xml:space="preserve">
+    <value>हे लीड घ्या</value>
+  </data>
+  <data name="VendorOnboardingTitle" xml:space="preserve">
+    <value>तुमची व्यवसाय प्रोफाइल सेट करा</value>
+  </data>
+  <data name="VendorOnboardingSubtitle" xml:space="preserve">
+    <value>रहिवाशांसाठी लाइव्ह होण्यापूर्वी एक अॅडमिन तुमच्या प्रोफाइलचे पुनरावलोकन करून मंजुरी देईल.</value>
+  </data>
+  <data name="BusinessNamePlaceholder" xml:space="preserve">
+    <value>व्यवसायाचे नाव</value>
+  </data>
+  <data name="WhatsAppNumberPlaceholder" xml:space="preserve">
+    <value>व्हॉट्सअॅप नंबर</value>
+  </data>
+  <data name="BioPlaceholder" xml:space="preserve">
+    <value>संक्षिप्त परिचय / तुमच्या सेवांबद्दल</value>
+  </data>
+  <data name="SocietiesYouServeHeader" xml:space="preserve">
+    <value>तुम्ही सेवा देत असलेल्या सोसायट्या</value>
+  </data>
+  <data name="SocietiesYouServeNote" xml:space="preserve">
+    <value>SOS लीड्स आणि शोध दृश्यमानता येथे तुम्ही निवडलेल्या सोसायट्यांपुरती मर्यादित आहे.</value>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>मंजुरीसाठी सबमिट करा</value>
+  </data>
+  <data name="PostBroadcastIntro" xml:space="preserve">
+    <value>तुमच्या कव्हरेज क्षेत्रातील रहिवाशांसोबत अपडेट किंवा ऑफर शेअर करा.</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>शीर्षक</value>
+  </data>
+  <data name="MessagePlaceholder" xml:space="preserve">
+    <value>संदेश</value>
+  </data>
+  <data name="PostButton" xml:space="preserve">
+    <value>पोस्ट करा</value>
+  </data>
+  <data name="PostBroadcastErrorMessage" xml:space="preserve">
+    <value>तुमचे अपडेट पोस्ट करता आले नाही. कृपया पुन्हा प्रयत्न करा.</value>
+  </data>
+  <data name="PostedFormat" xml:space="preserve">
+    <value>{0:g} UTC रोजी पोस्ट केले</value>
+  </data>
+  <data name="ReportedFormat" xml:space="preserve">
+    <value>{0:g} UTC रोजी नोंदवले</value>
+  </data>
+  <data name="ProfileViewsLabel" xml:space="preserve">
+    <value>प्रोफाइल दृश्ये</value>
+  </data>
+  <data name="CallsLabel" xml:space="preserve">
+    <value>कॉल्स</value>
+  </data>
+  <data name="WhatsAppLabel" xml:space="preserve">
+    <value>व्हॉट्सअॅप</value>
+  </data>
+  <data name="MuteButton" xml:space="preserve">
+    <value>म्यूट करा</value>
+  </data>
+  <data name="UnmuteButton" xml:space="preserve">
+    <value>अनम्यूट करा</value>
+  </data>
+  <data name="MutedNote" xml:space="preserve">
+    <value>म्यूट केले — तुम्हाला या विक्रेत्याकडून अपडेट्स दिसणार नाहीत.</value>
+  </data>
+  <data name="VendorUpdatesEmpty" xml:space="preserve">
+    <value>या विक्रेत्याकडून अजून कोणतेही अपडेट्स नाहीत.</value>
+  </data>
+</root>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Compliance.HelpPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Help">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Label Text="How NestHub Works" Style="{StaticResource TitleLabelStyle}" HorizontalOptions="Start" HorizontalTextAlignment="Start" />
+            <Label Style="{StaticResource BodyLabelStyle}" Text="A quick guide to the main features." />
+
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Finding a vendor" Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Style="{StaticResource BodyLabelStyle}" Text="Use the Search tab to browse or search vendors by name, service, or category. Every vendor is tagged In-house, Nearby/Local, or Other Society, so you always know how close a vendor is to you. Tap a vendor to view their profile, call, or message on WhatsApp." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Favorites" Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Style="{StaticResource BodyLabelStyle}" Text="Tap the heart icon on a vendor's profile to save them to My Favorites on your Home screen for quick access later." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Vendor broadcasts" Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Style="{StaticResource BodyLabelStyle}" Text="Vendors can post real-time updates and offers. You'll see broadcasts from every vendor covering your society right on your Home feed, as they're posted." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="SOS" Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Style="{StaticResource BodyLabelStyle}" Text="Need urgent help — a plumber, electrician, or similar? Open the SOS tab, describe what you need, and it's instantly broadcast to every vendor serving your society. The first to respond can claim your request and reach out." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Style="{StaticResource CardStyle}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Reviews" Style="{StaticResource SubtitleLabelStyle}" />
+                    <Label Style="{StaticResource BodyLabelStyle}" Text="After working with a vendor, leave a rating and review from their profile to help your neighbors. Reviews you find inappropriate can be flagged for Admin moderation." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Legal" Style="{StaticResource SubtitleLabelStyle}" Margin="0,8,0,0" />
+            <Button Text="Privacy Policy" Clicked="OnPrivacyPolicyClicked" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" HorizontalOptions="Start" />
+            <Button Text="Terms and Conditions" Clicked="OnTermsClicked" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" HorizontalOptions="Start" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

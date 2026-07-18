@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using NestHub.Application.Users.Commands.RegisterUser;
 using NestHub.Domain.Enums;
 using NestHub.Mobile.Services.Api;
@@ -9,8 +10,13 @@ namespace NestHub.Mobile.ViewModels;
 public sealed partial class RegisterViewModel : ObservableObject
 {
     private readonly ApiClient _apiClient;
+    private readonly ILogger<RegisterViewModel> _logger;
 
-    public RegisterViewModel(ApiClient apiClient) => _apiClient = apiClient;
+    public RegisterViewModel(ApiClient apiClient, ILogger<RegisterViewModel> logger)
+    {
+        _apiClient = apiClient;
+        _logger = logger;
+    }
 
     [ObservableProperty]
     private string _phoneNumber = string.Empty;
@@ -42,8 +48,9 @@ public sealed partial class RegisterViewModel : ObservableObject
 
             await Shell.Current.GoToAsync("//Login");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Registration failed for phone number {PhoneNumber}.", PhoneNumber);
             ErrorMessage = "Registration failed. The phone number may already be in use.";
         }
         finally

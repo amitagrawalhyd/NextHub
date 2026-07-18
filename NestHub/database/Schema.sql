@@ -233,3 +233,167 @@ BEGIN
     CREATE INDEX IX_AnalyticsLogs_VendorId_CreatedDateTime ON dbo.AnalyticsLogs (VendorId, CreatedDateTime);
 END;
 GO
+
+-- =============================================================================
+-- Vendors.IsFeatured (Admin "spotlight" flag — featured vendors sort first in search)
+-- =============================================================================
+IF COL_LENGTH(N'dbo.Vendors', N'IsFeatured') IS NULL
+BEGIN
+    ALTER TABLE dbo.Vendors ADD IsFeatured BIT NOT NULL CONSTRAINT DF_Vendors_IsFeatured DEFAULT (0);
+END;
+GO
+
+-- =============================================================================
+-- VendorSocietyCoverages (which societies a vendor serves — drives SOS lead matching)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.VendorSocietyCoverages', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.VendorSocietyCoverages
+    (
+        Id         UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorSocietyCoverages PRIMARY KEY,
+        VendorId   UNIQUEIDENTIFIER NOT NULL,
+        SocietyId  UNIQUEIDENTIFIER NOT NULL,
+        CONSTRAINT FK_VendorSocietyCoverages_Vendors_VendorId FOREIGN KEY (VendorId) REFERENCES dbo.Vendors (Id) ON DELETE CASCADE,
+        CONSTRAINT FK_VendorSocietyCoverages_Societies_SocietyId FOREIGN KEY (SocietyId) REFERENCES dbo.Societies (Id)
+    );
+
+    CREATE UNIQUE INDEX UX_VendorSocietyCoverages_VendorId_SocietyId ON dbo.VendorSocietyCoverages (VendorId, SocietyId);
+END;
+GO
+
+-- =============================================================================
+-- Announcements (Admin-posted per-society notices, shown on the Resident Home screen)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.Announcements', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Announcements
+    (
+        Id               UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_Announcements PRIMARY KEY,
+        SocietyId        UNIQUEIDENTIFIER NOT NULL,
+        Title            NVARCHAR(200)    NOT NULL,
+        Body             NVARCHAR(2000)   NOT NULL,
+        CreatedDateTime  DATETIME2        NOT NULL CONSTRAINT DF_Announcements_CreatedDateTime DEFAULT (SYSUTCDATETIME()),
+        ExpiresAtUtc     DATETIME2        NULL,
+        CONSTRAINT FK_Announcements_Societies_SocietyId FOREIGN KEY (SocietyId) REFERENCES dbo.Societies (Id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IX_Announcements_SocietyId ON dbo.Announcements (SocietyId);
+END;
+GO
+
+-- =============================================================================
+-- EmergencyContacts (per-society contact directory shown on the Resident SOS screen)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.EmergencyContacts', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.EmergencyContacts
+    (
+        Id           UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_EmergencyContacts PRIMARY KEY,
+        SocietyId    UNIQUEIDENTIFIER NOT NULL,
+        Name         NVARCHAR(200)    NOT NULL,
+        Role         NVARCHAR(100)    NOT NULL,
+        PhoneNumber  NVARCHAR(20)     NOT NULL,
+        CONSTRAINT FK_EmergencyContacts_Societies_SocietyId FOREIGN KEY (SocietyId) REFERENCES dbo.Societies (Id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IX_EmergencyContacts_SocietyId ON dbo.EmergencyContacts (SocietyId);
+END;
+GO
+
+-- =============================================================================
+-- VendorFavorites (a resident bookmarking a vendor)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.VendorFavorites', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.VendorFavorites
+    (
+        Id               UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorFavorites PRIMARY KEY,
+        ResidentId       UNIQUEIDENTIFIER NOT NULL,
+        VendorId         UNIQUEIDENTIFIER NOT NULL,
+        CreatedDateTime  DATETIME2        NOT NULL CONSTRAINT DF_VendorFavorites_CreatedDateTime DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT FK_VendorFavorites_Residents_ResidentId FOREIGN KEY (ResidentId) REFERENCES dbo.Residents (Id) ON DELETE CASCADE,
+        CONSTRAINT FK_VendorFavorites_Vendors_VendorId FOREIGN KEY (VendorId) REFERENCES dbo.Vendors (Id)
+    );
+
+    CREATE UNIQUE INDEX UX_VendorFavorites_ResidentId_VendorId ON dbo.VendorFavorites (ResidentId, VendorId);
+END;
+GO
+
+-- =============================================================================
+-- VendorBroadcasts (vendor-posted real-time updates/offers, delivered to residents of every
+-- society the vendor covers via SignalR)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.VendorBroadcasts', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.VendorBroadcasts
+    (
+        Id               UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorBroadcasts PRIMARY KEY,
+        VendorId         UNIQUEIDENTIFIER NOT NULL,
+        Title            NVARCHAR(200)    NOT NULL,
+        Message          NVARCHAR(2000)   NOT NULL,
+        CreatedDateTime  DATETIME2        NOT NULL CONSTRAINT DF_VendorBroadcasts_CreatedDateTime DEFAULT (SYSUTCDATETIME()),
+        ExpiresAtUtc     DATETIME2        NULL,
+        CONSTRAINT FK_VendorBroadcasts_Vendors_VendorId FOREIGN KEY (VendorId) REFERENCES dbo.Vendors (Id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IX_VendorBroadcasts_VendorId ON dbo.VendorBroadcasts (VendorId);
+END;
+GO
+
+-- =============================================================================
+-- Users.SocietyId (scopes an Admin account to a single society; NULL = Central Admin)
+-- =============================================================================
+IF COL_LENGTH(N'dbo.Users', N'SocietyId') IS NULL
+BEGIN
+    ALTER TABLE dbo.Users ADD SocietyId UNIQUEIDENTIFIER NULL;
+    ALTER TABLE dbo.Users ADD CONSTRAINT FK_Users_Societies_SocietyId FOREIGN KEY (SocietyId) REFERENCES dbo.Societies (Id);
+    CREATE INDEX IX_Users_SocietyId ON dbo.Users (SocietyId);
+END;
+GO
+
+-- =============================================================================
+-- Demo society-scoped Admin accounts (password: same as the seeded Central Admin)
+-- =============================================================================
+IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE PhoneNumber = N'9000000011')
+BEGIN
+    INSERT INTO dbo.Users (Id, PhoneNumber, Email, PasswordHash, UserType, IsVerified, IsActive, CreatedDateTime, SocietyId)
+    SELECT NEWID(), N'9000000011', N'admin.lakeview@nesthub.example', PasswordHash, N'Admin', 1, 1, SYSUTCDATETIME(),
+           (SELECT Id FROM dbo.Societies WHERE Name = N'Lakeview Residency')
+    FROM dbo.Users WHERE PhoneNumber = N'9000000001';
+END;
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE PhoneNumber = N'9000000012')
+BEGIN
+    INSERT INTO dbo.Users (Id, PhoneNumber, Email, PasswordHash, UserType, IsVerified, IsActive, CreatedDateTime, SocietyId)
+    SELECT NEWID(), N'9000000012', N'admin.greenmeadows@nesthub.example', PasswordHash, N'Admin', 1, 1, SYSUTCDATETIME(),
+           (SELECT Id FROM dbo.Societies WHERE Name = N'Green Meadows')
+    FROM dbo.Users WHERE PhoneNumber = N'9000000001';
+END;
+
+IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE PhoneNumber = N'9000000013')
+BEGIN
+    INSERT INTO dbo.Users (Id, PhoneNumber, Email, PasswordHash, UserType, IsVerified, IsActive, CreatedDateTime, SocietyId)
+    SELECT NEWID(), N'9000000013', N'admin.myhome@nesthub.example', PasswordHash, N'Admin', 1, 1, SYSUTCDATETIME(),
+           (SELECT Id FROM dbo.Societies WHERE Name = N'My Home Bhooja')
+    FROM dbo.Users WHERE PhoneNumber = N'9000000001';
+END;
+GO
+
+-- =============================================================================
+-- VendorMutes (a resident opting out of a specific vendor's broadcasts/announcements)
+-- =============================================================================
+IF OBJECT_ID(N'dbo.VendorMutes', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.VendorMutes
+    (
+        Id               UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorMutes PRIMARY KEY,
+        ResidentId       UNIQUEIDENTIFIER NOT NULL,
+        VendorId         UNIQUEIDENTIFIER NOT NULL,
+        CreatedDateTime  DATETIME2        NOT NULL CONSTRAINT DF_VendorMutes_CreatedDateTime DEFAULT (SYSUTCDATETIME()),
+        CONSTRAINT FK_VendorMutes_Residents_ResidentId FOREIGN KEY (ResidentId) REFERENCES dbo.Residents (Id) ON DELETE CASCADE,
+        CONSTRAINT FK_VendorMutes_Vendors_VendorId FOREIGN KEY (VendorId) REFERENCES dbo.Vendors (Id)
+    );
+
+    CREATE UNIQUE INDEX UX_VendorMutes_ResidentId_VendorId ON dbo.VendorMutes (ResidentId, VendorId);
+END;
+GO

@@ -4,9 +4,17 @@ namespace NestHub.Mobile.Views.Vendor;
 
 public partial class VendorOnboardingPage : ContentPage
 {
+    private readonly VendorOnboardingViewModel _viewModel;
+
     public VendorOnboardingPage(VendorOnboardingViewModel viewModel)
     {
         InitializeComponent();
-        BindingContext = viewModel;
+        BindingContext = _viewModel = viewModel;
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        _viewModel.AppearingCommand.Execute(null);
     }
 }

@@ -22,5 +22,16 @@ public sealed class SosRequestRepository : ISosRequestRepository
             .OrderByDescending(r => r.CreatedDateTimeUtc)
             .ToListAsync(cancellationToken);
 
+    public Task<int> CountOpenAsync(CancellationToken cancellationToken = default) =>
+        _context.SosRequests.CountAsync(r => r.Status != SosStatus.Closed, cancellationToken);
+
+    public Task<int> CountOpenBySocietyAsync(SocietyId societyId, CancellationToken cancellationToken = default) =>
+        _context.SosRequests.CountAsync(r => r.SocietyId == societyId && r.Status != SosStatus.Closed, cancellationToken);
+
+    public async Task<IReadOnlyList<SosRequest>> GetAllInRangeAsync(DateTime fromUtc, DateTime toUtc, CancellationToken cancellationToken = default) =>
+        await _context.SosRequests
+            .Where(r => r.CreatedDateTimeUtc >= fromUtc && r.CreatedDateTimeUtc <= toUtc)
+            .ToListAsync(cancellationToken);
+
     public void Add(SosRequest sosRequest) => _context.SosRequests.Add(sosRequest);
 }

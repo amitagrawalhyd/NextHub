@@ -17,5 +17,8 @@ public sealed class ResidentRepository : IResidentRepository
     public Task<Resident?> GetByUserIdAsync(UserId userId, CancellationToken cancellationToken = default) =>
         _context.Residents.FirstOrDefaultAsync(r => r.UserId == userId, cancellationToken);
 
+    public async Task<IReadOnlyList<Resident>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await _context.Residents.ToListAsync(cancellationToken);
+
     public void Add(Resident resident) => _context.Residents.Add(resident);
 }

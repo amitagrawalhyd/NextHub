@@ -4,19 +4,51 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    xmlns:dtos="clr-namespace:NestHub.Application.Vendors.Dtos;assembly=NestHub.Application"
     xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:VendorDashboardViewModel"
     Title="Dashboard">
 
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="16">
 
-            <Label Text="{Binding Vendor.BusinessName}" FontSize="22" FontAttributes="Bold" />
-            <Label Text="{Binding Vendor.SubscriptionTier, StringFormat='Subscription: {0}'}" TextColor="{StaticResource Gray500}" />
-            <Label Text="{Binding Vendor.IsApproved, StringFormat='Approval status: {0}'}" TextColor="{StaticResource Gray500}" />
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <Label Grid.Column="0" Text="{Binding Vendor.BusinessName}" Style="{StaticResource TitleLabelStyle}" HorizontalOptions="Start" />
+                <ImageButton Grid.Column="1" Source="icon_language" HeightRequest="22" WidthRequest="22"
+                             BackgroundColor="Transparent" Clicked="OnLanguageClicked" Margin="0,0,12,0" />
+                <ImageButton Grid.Column="2" Source="icon_help" HeightRequest="24" WidthRequest="24" BackgroundColor="Transparent" Command="{Binding OpenHelpCommand}" />
+            </Grid>
+            <Label Text="{Binding Vendor.SubscriptionTier, Converter={StaticResource SubscriptionFormatConverter}}" TextColor="{StaticResource Gray500}" />
+            <Label Text="{Binding Vendor.IsApproved, Converter={StaticResource ApprovalStatusFormatConverter}}" TextColor="{StaticResource Gray500}" />
 
-            <Label Text="Last 30 days" FontAttributes="Bold" FontSize="16" />
+            <Label Text="{Binding [Last30DaysHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource SubtitleLabelStyle}" />
             <microcharts:ChartView Chart="{Binding AnalyticsChart}" HeightRequest="240" />
+
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Text="{Binding [MyBroadcastsHeader], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource SubtitleLabelStyle}" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="{Binding [PostUpdateButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_broadcast" ContentLayout="Left,6" Command="{Binding PostBroadcastCommand}" />
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding MyBroadcasts}" HeightRequest="260">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding [NoBroadcastsPosted], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource EmptyStateLabelStyle}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:VendorBroadcastDto">
+                        <Border Style="{StaticResource CardStyle}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title}" Style="{StaticResource SubtitleLabelStyle}" />
+                                <Label Text="{Binding Message}" Style="{StaticResource BodyLabelStyle}" />
+                                <Label Text="{Binding CreatedDateTimeUtc, Converter={StaticResource PostedFormatConverter}}" Style="{StaticResource CaptionLabelStyle}" />
+                                <Button Text="{Binding [DeleteButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" BackgroundColor="Transparent" TextColor="{StaticResource Danger}" HorizontalOptions="Start"
+                                        Command="{Binding BindingContext.DeleteBroadcastCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                        CommandParameter="{Binding .}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
 

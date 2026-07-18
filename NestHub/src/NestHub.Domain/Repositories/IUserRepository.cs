@@ -9,5 +9,6 @@ public interface IUserRepository
     Task<User?> GetByIdAsync(UserId id, CancellationToken cancellationToken = default);
     Task<User?> GetByPhoneNumberAsync(PhoneNumber phoneNumber, CancellationToken cancellationToken = default);
     Task<bool> ExistsByPhoneNumberAsync(PhoneNumber phoneNumber, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
     void Add(User user);
 }

@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using NestHub.Application.Residents.Commands.RegisterResident;
 using NestHub.Application.Residents.Dtos;
 using NestHub.Application.Residents.Queries.GetMyResidentProfile;
+using NestHub.Application.Vendors.Dtos;
+using NestHub.Application.Vendors.Queries.GetMyFavoriteVendors;
+using NestHub.Application.Vendors.Queries.GetMyMutedVendorIds;
 
 namespace NestHub.API.Controllers;
 
@@ -33,5 +36,29 @@ public sealed class ResidentsController : ControllerBase
     {
         var resident = await _sender.Send(command, cancellationToken);
         return CreatedAtAction(nameof(Register), new { id = resident.Id }, resident);
+    }
+
+    [HttpGet("me/favorites")]
+    [ProducesResponseType(typeof(IReadOnlyList<VendorDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyFavorites(CancellationToken cancellationToken)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var resident = await _sender.Send(new GetMyResidentProfileQuery(userId), cancellationToken);
+        if (resident is null) return Ok(Array.Empty<VendorDto>());
+
+        var favorites = await _sender.Send(new GetMyFavoriteVendorsQuery(resident.Id), cancellationToken);
+        return Ok(favorites);
+    }
+
+    [HttpGet("me/muted-vendors")]
+    [ProducesResponseType(typeof(IReadOnlyList<Guid>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetMyMutedVendors(CancellationToken cancellationToken)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var resident = await _sender.Send(new GetMyResidentProfileQuery(userId), cancellationToken);
+        if (resident is null) return Ok(Array.Empty<Guid>());
+
+        var mutedVendorIds = await _sender.Send(new GetMyMutedVendorIdsQuery(resident.Id), cancellationToken);
+        return Ok(mutedVendorIds);
     }
 }

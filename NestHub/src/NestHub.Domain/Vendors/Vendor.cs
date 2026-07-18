@@ -21,6 +21,7 @@ public sealed class Vendor : AggregateRoot<VendorId>
     public TrustBadgeStatus TrustBadgeStatus { get; private set; }
     public double AverageRating { get; private set; }
     public bool IsApproved { get; private set; }
+    public bool IsFeatured { get; private set; }
     public IReadOnlyCollection<Service> Services => _services.AsReadOnly();
 
     private Vendor()
@@ -110,4 +111,8 @@ public sealed class Vendor : AggregateRoot<VendorId>
             throw new ArgumentOutOfRangeException(nameof(newAverage), newAverage, "Average rating must be between 0 and 5.");
         AverageRating = newAverage;
     }
+
+    public void MarkFeatured() => IsFeatured = true;
+
+    public void UnmarkFeatured() => IsFeatured = false;
 }

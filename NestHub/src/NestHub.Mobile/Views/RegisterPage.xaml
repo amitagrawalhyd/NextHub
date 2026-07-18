@@ -4,23 +4,24 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
     x:DataType="viewmodels:RegisterViewModel"
     Title="Create account">
 
     <ScrollView>
         <VerticalStackLayout Padding="24" Spacing="16">
 
-            <Entry Placeholder="Phone number" Keyboard="Telephone" Text="{Binding PhoneNumber}" />
-            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+            <Entry Placeholder="{Binding [PhoneNumberPlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Keyboard="Telephone" Text="{Binding PhoneNumber}" />
+            <Entry Placeholder="{Binding [PasswordPlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" IsPassword="True" Text="{Binding Password}" />
 
             <HorizontalStackLayout Spacing="8">
                 <Switch IsToggled="{Binding IsVendor}" />
-                <Label Text="I'm registering as a vendor" VerticalOptions="Center" />
+                <Label Text="{Binding [RegisteringAsVendorLabel], Source={x:Static strings:LocalizationResourceManager.Instance}}" VerticalOptions="Center" />
             </HorizontalStackLayout>
 
             <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
 
-            <Button Text="Register" Command="{Binding RegisterCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <Button Text="{Binding [RegisterButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_check" ContentLayout="Left,8" Command="{Binding RegisterCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
             <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
 
         </VerticalStackLayout>

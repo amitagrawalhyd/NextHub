@@ -3,14 +3,9 @@ namespace NestHub.Mobile.Services;
 public static class AppConfig
 {
     /// <summary>
-    /// 10.0.2.2 is the Android emulator's alias for the host machine's localhost. For a physical
-    /// device or iOS simulator during development, replace with your machine's LAN IP; for
-    /// production this should point at the deployed NestHub.API base URL (see DEPLOYMENT.md).
+    /// Points at the deployed NestHub.API (Azure App Service, Free tier — see DEPLOYMENT.md).
+    /// For local backend development, swap this for "http://10.0.2.2:5126/" (Android emulator)
+    /// or "http://localhost:5126/" (other targets) to hit a locally running API instead.
     /// </summary>
-    public static string ApiBaseAddress { get; } =
-#if ANDROID
-        "http://10.0.2.2:5126/";
-#else
-        "http://localhost:5126/";
-#endif
+    public static string ApiBaseAddress { get; } = "https://nesthub-api-amitagrawal.azurewebsites.net/";
 }

@@ -11,5 +11,6 @@ public interface IVendorRepository
     Task<IReadOnlyList<Vendor>> GetPendingApprovalAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Vendor>> GetByCategoryAsync(string category, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Vendor>> GetAllApprovedAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Vendor>> GetByIdsAsync(IEnumerable<VendorId> ids, CancellationToken cancellationToken = default);
     void Add(Vendor vendor);
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Vendor.PostBroadcastPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    xmlns:strings="clr-namespace:NestHub.Mobile.Resources.Strings"
+    x:DataType="viewmodels:PostBroadcastViewModel"
+    Title="Post an update">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Label Text="{Binding [PostBroadcastIntro], Source={x:Static strings:LocalizationResourceManager.Instance}}" Style="{StaticResource BodyLabelStyle}" />
+
+            <Entry Placeholder="{Binding [TitlePlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Text="{Binding Title}" />
+            <Editor Placeholder="{Binding [MessagePlaceholder], Source={x:Static strings:LocalizationResourceManager.Instance}}" Text="{Binding Message}" HeightRequest="120" AutoSize="TextChanges" />
+
+            <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource Danger}" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <Button Text="{Binding [PostButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" Command="{Binding PostCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

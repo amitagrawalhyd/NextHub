@@ -4,27 +4,90 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NestHub Admin</title>
+    <link rel="icon" type="image/png" href="~/images/logo-nesthub.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NestHub.Admin.styles.css" asp-append-version="true" />
     <style>
         :root {
             --nesthub-navy: #1F5C99;
+            --nesthub-navy-dark: #123A61;
             --nesthub-orange: #F2872E;
         }
 
-        .navbar-brand {
-            font-weight: 700;
+        .navbar {
+            background: linear-gradient(135deg, var(--nesthub-navy-dark), var(--nesthub-navy));
+            border-bottom: 3px solid var(--nesthub-orange);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
         }
 
-        .navbar-brand .brand-nest { color: var(--nesthub-navy); }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .navbar-brand .brand-logo {
+            height: 42px;
+            width: 42px;
+            object-fit: contain;
+            background: #fff;
+            border-radius: 0.5rem;
+            padding: 3px;
+        }
+
+        .navbar-brand .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
+        }
+
+        .navbar-brand .brand-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .navbar-brand .brand-nest { color: #FFFFFF; }
         .navbar-brand .brand-hub { color: var(--nesthub-orange); }
 
-        .navbar { border-bottom: 3px solid var(--nesthub-orange); }
+        .navbar-brand .brand-sub {
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.65);
+            margin-top: 2px;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+        }
 
         .nav-link.active {
+            font-weight: 700;
+            color: #ffffff !important;
+            border-bottom: 2px solid var(--nesthub-orange);
+        }
+
+        .society-scope-badge {
+            font-size: 0.72rem;
             font-weight: 600;
-            color: var(--nesthub-navy) !important;
+            letter-spacing: 0.03em;
+            color: #fff;
+            background: rgba(242, 135, 46, 0.25);
+            border: 1px solid rgba(242, 135, 46, 0.6);
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
         }
 
         .btn-primary {
@@ -41,26 +104,58 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index"><span class="brand-nest">Nest</span><span class="brand-hub">Hub</span> Admin</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <img src="~/images/logo-nesthub.png" alt="NestHub" class="brand-logo" />
+                    <span class="brand-text">
+                        <span class="brand-name"><span class="brand-nest">Nest</span><span class="brand-hub">Hub</span></span>
+                        <span class="brand-sub">Admin</span>
+                    </span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-lg-inline-flex justify-content-between">
                     @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Vendors/Index">Vendor Approvals</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Categories/Index">Categories</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Reviews/Index">Review Moderation</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Societies/Index">Societies</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Audit/Index">System Audit</a></li>
+                        var societyId = User.GetSocietyId();
+                        <ul class="navbar-nav flex-grow-1 align-items-lg-center">
+                            <li class="nav-item"><a class="nav-link" asp-page="/Index">Dashboard</a></li>
+                            @if (societyId is null)
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-page="/Vendors/Index">Vendor Approvals</a></li>
+                            }
+                            <li class="nav-item"><a class="nav-link" asp-page="/Residents/Index">Residents</a></li>
+                            @if (societyId is null)
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-page="/Categories/Index">Categories</a></li>
+                            }
+                            <li class="nav-item"><a class="nav-link" asp-page="/Reviews/Index">Review Moderation</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Societies/Index">Societies</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Announcements/Index">Announcements</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/EmergencyContacts/Index">Emergency Contacts</a></li>
+                            @if (societyId is null)
+                            {
+                                <li class="nav-item"><a class="nav-link" asp-page="/Users/Index">User Accounts</a></li>
+                                <li class="nav-item"><a class="nav-link" asp-page="/Audit/Index">System Audit</a></li>
+                            }
+                            <li class="nav-item"><a class="nav-link" asp-page="/Help/Index">Help</a></li>
                         </ul>
-                        <form asp-page="/Account/Logout" method="post" class="d-flex">
-                            <button type="submit" class="btn btn-outline-secondary btn-sm">Sign out</button>
-                        </form>
+                        <div class="d-flex align-items-center gap-2">
+                            @if (societyId is not null)
+                            {
+                                <span class="society-scope-badge">Society Admin</span>
+                            }
+                            else
+                            {
+                                <span class="society-scope-badge">Central Admin</span>
+                            }
+                            <form asp-page="/Account/Logout" method="post" class="d-flex m-0">
+                                <button type="submit" class="btn btn-outline-light btn-sm">Sign out</button>
+                            </form>
+                        </div>
                     }
                 </div>
             </div>

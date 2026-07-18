@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using NestHub.Admin.Common;
 using NestHub.Application.Categories.Commands.CreateCategory;
 using NestHub.Application.Categories.Commands.DeleteCategory;
 using NestHub.Application.Categories.Commands.SetCategoryActive;
@@ -9,7 +9,7 @@ using NestHub.Application.Categories.Queries.GetCategories;
 
 namespace NestHub.Admin.Pages.Categories;
 
-public sealed class IndexModel : PageModel
+public sealed class IndexModel : CentralAdminOnlyPageModel
 {
     private readonly ISender _sender;
 

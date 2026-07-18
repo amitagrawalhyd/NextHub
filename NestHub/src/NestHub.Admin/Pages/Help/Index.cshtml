@@ -1,0 +1,73 @@
+@page
+@model NestHub.Admin.Pages.Help.IndexModel
+@{
+    ViewData["Title"] = "Help";
+}
+
+<h1>Help &amp; How It Works</h1>
+<p class="text-muted">A quick reference for the workflows behind every page in this Admin portal.</p>
+
+<div class="row g-3">
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Vendor Approvals</h4>
+                <p class="mb-0">Vendors self-register from the Mobile app but stay invisible to residents until an
+                    Admin approves them here. Award a trust badge afterwards to signal a vetted, reliable vendor on
+                    their public profile. Featured vendors get priority placement in resident search results.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Vendor Coverage &amp; Categorization</h4>
+                <p class="mb-0">Each vendor picks which societies they serve under their own profile. Residents see
+                    vendors automatically grouped into three tiers: <strong>In-house</strong> (covers the resident's
+                    own society), <strong>Nearby/Local</strong> (covers a society within 5&nbsp;km), and
+                    <strong>Other Society</strong> (everything else). No manual tagging is required here &mdash;
+                    the tier is computed from the coverage each vendor sets.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Review Moderation</h4>
+                <p class="mb-0">Residents and vendors can flag a review as inappropriate or fake. Flagged reviews
+                    queue here for an Admin decision &mdash; approve to keep it visible, or remove it entirely.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Societies &amp; Emergency Contacts</h4>
+                <p class="mb-0">Register each gated community or apartment society NestHub onboards, including its
+                    map location (used for the Nearby/Local vendor tier). Emergency contacts registered per society
+                    appear on the Resident SOS screen with one-tap calling.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Announcements &amp; Vendor Broadcasts</h4>
+                <p class="mb-0">Admin-posted Announcements are society-wide notices (maintenance, events). Vendor
+                    Broadcasts are a separate stream &mdash; vendors post their own updates and offers, delivered in
+                    real time to residents of every society the vendor covers. Neither requires Admin approval to
+                    post; moderation happens after the fact via Review Moderation and vendor approval status.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h4>Dashboard &amp; Analytics</h4>
+                <p class="mb-0">The Dashboard summarizes platform health at a glance and ranks vendors by resident
+                    engagement (profile views, calls, WhatsApp clicks) over the last 30 days &mdash; useful for
+                    spotting which vendors are resonating and which pending approvals need attention first.</p>
+            </div>
+        </div>
+    </div>
+</div>

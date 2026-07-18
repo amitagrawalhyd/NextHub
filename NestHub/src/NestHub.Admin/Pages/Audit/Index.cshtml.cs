@@ -1,11 +1,11 @@
 using MediatR;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using NestHub.Admin.Common;
 using NestHub.Application.Audit.Dtos;
 using NestHub.Application.Audit.Queries.GetSystemAudit;
 
 namespace NestHub.Admin.Pages.Audit;
 
-public sealed class IndexModel : PageModel
+public sealed class IndexModel : CentralAdminOnlyPageModel
 {
     private readonly ISender _sender;
 

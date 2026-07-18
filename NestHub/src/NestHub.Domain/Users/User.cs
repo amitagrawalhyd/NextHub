@@ -14,11 +14,17 @@ public sealed class User : AggregateRoot<UserId>
     public bool IsActive { get; private set; }
     public DateTime CreatedDateTimeUtc { get; private set; }
 
+    /// <summary>
+    /// Non-null only for Admin users scoped to manage a single society; null means a Central
+    /// Admin with unrestricted access across every society.
+    /// </summary>
+    public SocietyId? SocietyId { get; private set; }
+
     private User()
     {
     }
 
-    private User(UserId id, PhoneNumber phoneNumber, Email? email, string passwordHash, UserType userType)
+    private User(UserId id, PhoneNumber phoneNumber, Email? email, string passwordHash, UserType userType, SocietyId? societyId)
     {
         Id = id;
         PhoneNumber = phoneNumber;
@@ -28,14 +34,15 @@ public sealed class User : AggregateRoot<UserId>
         IsVerified = false;
         IsActive = true;
         CreatedDateTimeUtc = DateTime.UtcNow;
+        SocietyId = societyId;
     }
 
-    public static User Register(PhoneNumber phoneNumber, Email? email, string passwordHash, UserType userType)
+    public static User Register(PhoneNumber phoneNumber, Email? email, string passwordHash, UserType userType, SocietyId? societyId = null)
     {
         if (string.IsNullOrWhiteSpace(passwordHash))
             throw new ArgumentException("Password hash is required.", nameof(passwordHash));
 
-        var user = new User(UserId.New(), phoneNumber, email, passwordHash, userType);
+        var user = new User(UserId.New(), phoneNumber, email, passwordHash, userType, societyId);
         user.RaiseDomainEvent(new UserRegisteredDomainEvent(user.Id, userType));
         return user;
     }

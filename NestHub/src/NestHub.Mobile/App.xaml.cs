@@ -1,3 +1,4 @@
+using NestHub.Mobile.Resources.Strings;
 using NestHub.Mobile.Services.Auth;
 
 namespace NestHub.Mobile;
@@ -8,6 +9,8 @@ public partial class App : Microsoft.Maui.Controls.Application
 
     public App(AuthSession authSession)
     {
+        LocalizationResourceManager.Instance.RestoreSavedCulture();
+
         InitializeComponent();
         _authSession = authSession;
     }

@@ -42,6 +42,7 @@ public sealed class VendorConfiguration : IEntityTypeConfiguration<Vendor>
         builder.Property(v => v.TrustBadgeStatus).HasConversion<string>().HasColumnName("TrustBadgeStatus").HasMaxLength(30).IsRequired();
         builder.Property(v => v.AverageRating).HasColumnType("decimal(3,2)").IsRequired();
         builder.Property(v => v.IsApproved).IsRequired();
+        builder.Property(v => v.IsFeatured).IsRequired().HasDefaultValue(false);
 
         builder.HasMany(v => v.Services)
             .WithOne()

@@ -17,4 +17,9 @@ public sealed class AnalyticsLogRepository : IAnalyticsLogRepository
         await _context.AnalyticsLogs
             .Where(l => l.VendorId == vendorId && l.CreatedDateTimeUtc >= fromUtc && l.CreatedDateTimeUtc <= toUtc)
             .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<AnalyticsLog>> GetAllInRangeAsync(DateTime fromUtc, DateTime toUtc, CancellationToken cancellationToken = default) =>
+        await _context.AnalyticsLogs
+            .Where(l => l.CreatedDateTimeUtc >= fromUtc && l.CreatedDateTimeUtc <= toUtc)
+            .ToListAsync(cancellationToken);
 }

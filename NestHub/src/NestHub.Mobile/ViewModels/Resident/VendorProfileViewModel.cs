@@ -48,7 +48,14 @@ public sealed partial class VendorProfileViewModel : ObservableObject
     [ObservableProperty]
     private int _newReviewRating = 5;
 
+    [ObservableProperty]
+    private bool _isFavorite;
+
+    [ObservableProperty]
+    private bool _isMuted;
+
     public ObservableCollection<ReviewDto> NeighborReviews { get; } = new();
+    public ObservableCollection<VendorBroadcastDto> VendorBroadcasts { get; } = new();
 
     [RelayCommand]
     private async Task AppearingAsync()
@@ -56,6 +63,11 @@ public sealed partial class VendorProfileViewModel : ObservableObject
         if (!Guid.TryParse(VendorId, out var vendorGuid)) return;
 
         Vendor = await _apiClient.GetVendorProfileAsync(vendorGuid);
+
+        var broadcasts = await _apiClient.GetVendorBroadcastsForVendorAsync(vendorGuid);
+        VendorBroadcasts.Clear();
+        foreach (var broadcast in broadcasts)
+            VendorBroadcasts.Add(broadcast);
 
         var residentProfile = await _apiClient.GetMyResidentProfileAsync();
         if (residentProfile is null) return;
@@ -67,6 +79,38 @@ public sealed partial class VendorProfileViewModel : ObservableObject
         NeighborReviews.Clear();
         foreach (var review in reviews)
             NeighborReviews.Add(review);
+
+        var favorites = await _apiClient.GetMyFavoritesAsync();
+        IsFavorite = favorites.Any(v => v.Id == vendorGuid);
+
+        var mutedVendorIds = await _apiClient.GetMyMutedVendorIdsAsync();
+        IsMuted = mutedVendorIds.Contains(vendorGuid);
+    }
+
+    [RelayCommand]
+    private async Task ToggleFavoriteAsync()
+    {
+        if (!Guid.TryParse(VendorId, out var vendorGuid)) return;
+
+        if (IsFavorite)
+            await _apiClient.RemoveFavoriteAsync(vendorGuid);
+        else
+            await _apiClient.AddFavoriteAsync(vendorGuid);
+
+        IsFavorite = !IsFavorite;
+    }
+
+    [RelayCommand]
+    private async Task ToggleMuteAsync()
+    {
+        if (!Guid.TryParse(VendorId, out var vendorGuid)) return;
+
+        if (IsMuted)
+            await _apiClient.UnmuteVendorAsync(vendorGuid);
+        else
+            await _apiClient.MuteVendorAsync(vendorGuid);
+
+        IsMuted = !IsMuted;
     }
 
     [RelayCommand]
