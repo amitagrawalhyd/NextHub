@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels"
+    x:DataType="viewmodels:LoginViewModel"
+    Shell.NavBarIsVisible="False"
+    Title="Sign in">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16" VerticalOptions="Center">
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="0">
+                <Label Text="Nest" FontSize="32" FontAttributes="Bold" TextColor="{StaticResource NestHubNavy}" />
+                <Label Text="Hub" FontSize="32" FontAttributes="Bold" TextColor="{StaticResource NestHubOrange}" />
+            </HorizontalStackLayout>
+
+            <Label Text="Your neighborhood, trusted." FontSize="16" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" />
+
+            <Entry Placeholder="Phone number" Keyboard="Telephone" Text="{Binding PhoneNumber}" />
+            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+            <Button Text="Sign in" Command="{Binding LoginCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Button Text="Create an account" Command="{Binding NavigateToRegisterCommand}" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

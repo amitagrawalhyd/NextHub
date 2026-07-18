@@ -1,0 +1,42 @@
+@page
+@model NestHub.Admin.Pages.Societies.IndexModel
+@{
+    ViewData["Title"] = "Societies";
+}
+
+<h1>Societies</h1>
+<p class="text-muted">Register the gated communities and apartment societies onboarded onto NestHub.</p>
+
+<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
+    <div class="col-12">
+        <input asp-for="NewSociety.Name" class="form-control" placeholder="Society name" />
+    </div>
+    <div class="col-12">
+        <input asp-for="NewSociety.Address" class="form-control" placeholder="Address" />
+    </div>
+    <div class="col-6">
+        <button type="submit" class="btn btn-primary">Register Society</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var society in Model.Societies)
+        {
+            <tr>
+                <td>@society.Name</td>
+                <td>@society.Address</td>
+                <td>@society.City</td>
+                <td><span class="badge @(society.IsActive ? "bg-success" : "bg-secondary")">@(society.IsActive ? "Active" : "Inactive")</span></td>
+            </tr>
+        }
+    </tbody>
+</table>

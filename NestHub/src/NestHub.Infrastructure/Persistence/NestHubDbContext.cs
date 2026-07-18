@@ -1,0 +1,35 @@
+using Microsoft.EntityFrameworkCore;
+using NestHub.Domain.Analytics;
+using NestHub.Domain.Categories;
+using NestHub.Domain.Residents;
+using NestHub.Domain.Reviews;
+using NestHub.Domain.Societies;
+using NestHub.Domain.SosRequests;
+using NestHub.Domain.Users;
+using NestHub.Domain.Vendors;
+
+namespace NestHub.Infrastructure.Persistence;
+
+public sealed class NestHubDbContext : DbContext
+{
+    public NestHubDbContext(DbContextOptions<NestHubDbContext> options) : base(options)
+    {
+    }
+
+    public DbSet<Society> Societies => Set<Society>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Resident> Residents => Set<Resident>();
+    public DbSet<Vendor> Vendors => Set<Vendor>();
+    public DbSet<Service> Services => Set<Service>();
+    public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<SosRequest> SosRequests => Set<SosRequest>();
+    public DbSet<SosClaim> SosClaims => Set<SosClaim>();
+    public DbSet<AnalyticsLog> AnalyticsLogs => Set<AnalyticsLog>();
+    public DbSet<Category> Categories => Set<Category>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(NestHubDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+    }
+}

@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- Brand Gradients -->
+    <linearGradient id="houseGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2b7cc1" />
+      <stop offset="100%" stop-color="#165296" />
+    </linearGradient>
+    
+    <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f79433" />
+      <stop offset="100%" stop-color="#e06717" />
+    </linearGradient>
+
+    <linearGradient id="pinGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f98822" />
+      <stop offset="100%" stop-color="#e65c00" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background for Splash Screen Context -->
+  <rect width="100%" height="100%" fill="#ffffff" />
+
+  <g transform="translate(0, 20)">
+    <!-- ========================================== -->
+    <!-- WI-FI / SIGNAL WAVES                       -->
+    <!-- ========================================== -->
+    <g fill="none" stroke="url(#orangeGradient)" stroke-width="12" stroke-linecap="round">
+      <path d="M 435,245 A 55,55 0 0,1 490,300" stroke-width="10" />
+      <path d="M 435,215 A 85,85 0 0,1 520,300" stroke-width="12" />
+      <path d="M 435,185 A 115,115 0 0,1 550,300" stroke-width="14" />
+    </g>
+
+    <!-- ========================================== -->
+    <!-- HOUSE STRUCTURE                            -->
+    <!-- ========================================== -->
+    <path d="M 400,240 
+             L 445,275 L 445,245 L 465,245 L 465,290 
+             L 500,317 
+             Q 535,325 560,312 
+             Q 540,325 510,325
+             L 510,370
+             L 290,370
+             L 290,325
+             Q 260,325 240,312
+             Q 265,325 300,317 Z" 
+          fill="url(#houseGradient)" />
+
+    <!-- ========================================== -->
+    <!-- CONNECTIVITY NETWORK / MESH BASE          -->
+    <!-- ========================================== -->
+    <g id="network-mesh">
+      <!-- Outer Boundary Ellipse -->
+      <ellipse cx="400" cy="420" rx="120" ry="40" fill="none" stroke="#165296" stroke-width="3" />
+      <ellipse cx="400" cy="420" rx="95" ry="30" fill="none" stroke="#165296" stroke-width="1.5" opacity="0.7" />
+      
+      <!-- Network Lines -->
+      <g stroke="#165296" stroke-width="2" opacity="0.8">
+        <line x1="400" y1="390" x2="310" y2="410" />
+        <line x1="400" y1="390" x2="340" y2="435" />
+        <line x1="400" y1="390" x2="400" y2="455" />
+        <line x1="400" y1="390" x2="460" y2="435" />
+        <line x1="400" y1="390" x2="490" y2="410" />
+
+        <line x1="310" y1="410" x2="340" y2="435" />
+        <line x1="340" y1="435" x2="400" y2="455" />
+        <line x1="400" y1="455" x2="460" y2="435" />
+        <line x1="460" y1="435" x2="490" y2="410" />
+
+        <line x1="310" y1="410" x2="350" y2="395" />
+        <line x1="350" y1="395" x2="400" y2="390" />
+        <line x1="400" y1="390" x2="450" y2="395" />
+        <line x1="450" y1="395" x2="490" y2="410" />
+        
+        <!-- Transversal Connections -->
+        <line x1="350" y1="395" x2="340" y2="435" />
+        <line x1="450" y1="395" x2="460" y2="435" />
+        <line x1="380" y1="415" x2="400" y2="455" />
+        <line x1="420" y1="415" x2="400" y2="455" />
+        <line x1="350" y1="395" x2="380" y2="415" />
+        <line x1="450" y1="395" x2="420" y2="415" />
+      </g>
+
+      <!-- Orange Secondary Mesh Lines -->
+      <g stroke="#f79433" stroke-width="1.5" opacity="0.9">
+        <line x1="400" y1="390" x2="365" y2="410" />
+        <line x1="400" y1="390" x2="435" y2="410" />
+        <line x1="365" y1="410" x2="380" y2="435" />
+        <line x1="435" y1="410" x2="420" y2="435" />
+        <line x1="380" y1="435" x2="450" y2="425" />
+        <line x1="420" y1="435" x2="350" y2="425" />
+      </g>
+
+      <!-- Node Dots (Blue) -->
+      <g fill="#11437e">
+        <circle cx="400" cy="390" r="7" />
+        <circle cx="310" cy="410" r="6" />
+        <circle cx="490" cy="410" r="6" />
+        <circle cx="340" cy="435" r="5.5" />
+        <circle cx="460" cy="435" r="5.5" />
+        <circle cx="400" cy="455" r="6.5" />
+        <circle cx="350" cy="395" r="5" />
+        <circle cx="450" cy="395" r="5" />
+      </g>
+
+      <!-- Node Dots (Orange) -->
+      <g fill="#f79433">
+        <circle cx="365" cy="410" r="4.5" />
+        <circle cx="435" cy="410" r="4.5" />
+        <circle cx="380" cy="435" r="4" />
+        <circle cx="420" cy="435" r="4" />
+        <circle cx="350" cy="425" r="4" />
+        <circle cx="450" cy="425" r="4" />
+      </g>
+    </g>
+
+    <!-- ========================================== -->
+    <!-- LOCATION PIN                               -->
+    <!-- ========================================== -->
+    <g id="location-pin">
+      <!-- Main Outer Pin Pin Body -->
+      <path d="M 400,400 
+               C 365,365 350,345 350,320 
+               A 50,50 0 1,1 450,320 
+               C 450,345 435,365 400,400 Z" 
+            fill="url(#pinGradient)" 
+            filter="drop-shadow(0px 3px 4px rgba(0,0,0,0.15))" />
+      
+      <!-- Inner White Ring Container -->
+      <circle cx="400" cy="320" r="22" fill="#ffffff" />
+      
+      <!-- Center Blue Core Dot -->
+      <circle cx="400" cy="320" r="11" fill="#165296" />
+    </g>
+
+    <!-- ========================================== -->
+    <!-- TYPOGRAPHY (NestHub)                       -->
+    <!-- ========================================== -->
+    <text x="400" y="560" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="76" font-weight="600" letter-spacing="-1px">
+      <tspan fill="#165296">Nest</tspan><tspan fill="#f79433" font-weight="400">Hub</tspan>
+    </text>
+  </g>
+</svg>

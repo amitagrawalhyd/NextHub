@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Vendor.SosLeadsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    xmlns:dtos="clr-namespace:NestHub.Application.SosRequests.Dtos;assembly=NestHub.Application"
+    x:DataType="viewmodels:VendorSosLeadsViewModel"
+    Title="SOS Leads">
+
+    <Grid Padding="16">
+        <CollectionView ItemsSource="{Binding OpenRequests}">
+            <CollectionView.EmptyView>
+                <Label Text="No open urgent requests right now. New leads will appear here instantly." TextColor="{StaticResource Gray500}" HorizontalOptions="Center" VerticalOptions="Center" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="dtos:SosRequestDto">
+                    <Frame Padding="12" Margin="0,6" CornerRadius="10" BorderColor="{StaticResource NestHubOrange}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding Category}" FontAttributes="Bold" FontSize="16" TextColor="{StaticResource NestHubOrange}" />
+                            <Label Text="{Binding Description}" />
+                            <Label Text="{Binding CreatedDateTimeUtc, StringFormat='Reported {0:g} UTC'}" FontSize="11" TextColor="{StaticResource Gray500}" />
+                            <Button Text="Claim this lead"
+                                    Command="{Binding BindingContext.ClaimCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                    CommandParameter="{Binding .}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

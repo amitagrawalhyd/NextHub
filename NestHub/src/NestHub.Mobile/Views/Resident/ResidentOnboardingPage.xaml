@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Resident.ResidentOnboardingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
+    xmlns:dtos="clr-namespace:NestHub.Application.Societies.Dtos;assembly=NestHub.Application"
+    x:DataType="viewmodels:ResidentOnboardingViewModel"
+    Title="Complete your profile"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+
+            <Label Text="Tell us where you live" FontSize="22" FontAttributes="Bold" />
+            <Label Text="This unlocks neighbor-verified reviews and the SOS feature for your society." TextColor="{StaticResource Gray500}" />
+
+            <Picker Title="Society" ItemsSource="{Binding Societies}" SelectedItem="{Binding SelectedSociety}" ItemDisplayBinding="{Binding Name}" />
+
+            <Entry Placeholder="Block number (e.g. A)" Text="{Binding BlockNumber}" />
+            <Entry Placeholder="Flat number (e.g. 204)" Text="{Binding FlatNumber}" />
+            <Entry Placeholder="Your name" Text="{Binding Name}" />
+
+            <Button Text="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

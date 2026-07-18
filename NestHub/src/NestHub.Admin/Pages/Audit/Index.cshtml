@@ -1,0 +1,35 @@
+@page
+@model NestHub.Admin.Pages.Audit.IndexModel
+@{
+    ViewData["Title"] = "System Audit";
+}
+
+<h1>System Audit</h1>
+<p class="text-muted">Recent platform activity requiring admin attention, assembled from vendor approvals and review moderation queues.</p>
+
+@if (Model.Entries.Count == 0)
+{
+    <p class="text-muted">No activity to review.</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Timestamp (UTC)</th>
+                <th>Event</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var entry in Model.Entries)
+            {
+                <tr>
+                    <td>@entry.TimestampUtc.ToString("g")</td>
+                    <td><span class="badge bg-info text-dark">@entry.EventType</span></td>
+                    <td>@entry.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Vendor.VendorOnboardingPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    x:DataType="viewmodels:VendorOnboardingViewModel"
+    Title="Set up your business"
+    Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+
+            <Label Text="Set up your business profile" FontSize="22" FontAttributes="Bold" />
+            <Label Text="An admin will review and approve your profile before it goes live to residents." TextColor="{StaticResource Gray500}" />
+
+            <Entry Placeholder="Business name" Text="{Binding BusinessName}" />
+            <Entry Placeholder="WhatsApp number" Keyboard="Telephone" Text="{Binding WhatsAppNumber}" />
+            <Editor Placeholder="Short bio / about your services" Text="{Binding Bio}" HeightRequest="100" />
+
+            <Button Text="Submit for approval" Command="{Binding SaveCommand}" IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

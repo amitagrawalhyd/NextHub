@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Vendor.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Vendor"
+    xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+    x:DataType="viewmodels:VendorDashboardViewModel"
+    Title="Dashboard">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <Label Text="{Binding Vendor.BusinessName}" FontSize="22" FontAttributes="Bold" />
+            <Label Text="{Binding Vendor.SubscriptionTier, StringFormat='Subscription: {0}'}" TextColor="{StaticResource Gray500}" />
+            <Label Text="{Binding Vendor.IsApproved, StringFormat='Approval status: {0}'}" TextColor="{StaticResource Gray500}" />
+
+            <Label Text="Last 30 days" FontAttributes="Bold" FontSize="16" />
+            <microcharts:ChartView Chart="{Binding AnalyticsChart}" HeightRequest="240" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,46 @@
+@page
+@model NestHub.Admin.Pages.Categories.IndexModel
+@{
+    ViewData["Title"] = "Category Management";
+}
+
+<h1>Category Management</h1>
+<p class="text-muted">Manage the service categories vendors can list under (e.g. Home Maintenance, Tutors, Food &amp; Catering).</p>
+
+<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 30rem;">
+    <div class="col-8">
+        <input asp-for="NewCategoryName" class="form-control" placeholder="New category name" />
+    </div>
+    <div class="col-4">
+        <button type="submit" class="btn btn-primary w-100">Add</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle" style="max-width: 40rem;">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model.Categories)
+        {
+            <tr>
+                <td>@category.Name</td>
+                <td>
+                    <span class="badge @(category.IsActive ? "bg-success" : "bg-secondary")">@(category.IsActive ? "Active" : "Inactive")</span>
+                </td>
+                <td>
+                    <form method="post" asp-page-handler="ToggleActive" asp-route-categoryId="@category.Id" asp-route-isActive="@category.IsActive" class="d-inline">
+                        <button type="submit" class="btn btn-outline-secondary btn-sm">@(category.IsActive ? "Deactivate" : "Activate")</button>
+                    </form>
+                    <form method="post" asp-page-handler="Delete" asp-route-categoryId="@category.Id" class="d-inline" onsubmit="return confirm('Delete this category?');">
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

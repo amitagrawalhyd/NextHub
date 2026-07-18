@@ -1,0 +1,43 @@
+@page
+@model NestHub.Admin.Pages.Reviews.IndexModel
+@{
+    ViewData["Title"] = "Review Moderation";
+}
+
+<h1>Review Moderation</h1>
+<p class="text-muted">Reviews flagged as inappropriate or fake by residents/vendors await moderation here.</p>
+
+@if (Model.FlaggedReviews.Count == 0)
+{
+    <p class="text-muted">No flagged reviews. All clear.</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Sentiment</th>
+                <th>Submitted</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model.FlaggedReviews)
+            {
+                <tr>
+                    <td>@review.Rating / 5</td>
+                    <td>@review.Comment</td>
+                    <td>@(review.SentimentScore?.ToString("0.00") ?? "-")</td>
+                    <td>@review.CreatedDateTimeUtc.ToString("g")</td>
+                    <td>
+                        <form method="post" asp-page-handler="Remove" asp-route-reviewId="@review.Id" class="d-inline" onsubmit="return confirm('Remove this review permanently?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

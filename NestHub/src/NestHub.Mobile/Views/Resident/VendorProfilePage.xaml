@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Resident.VendorProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
+    xmlns:vendorDtos="clr-namespace:NestHub.Application.Vendors.Dtos;assembly=NestHub.Application"
+    xmlns:reviewDtos="clr-namespace:NestHub.Application.Reviews.Dtos;assembly=NestHub.Application"
+    x:DataType="viewmodels:VendorProfileViewModel"
+    Title="Vendor profile">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <VerticalStackLayout Spacing="4" BindingContext="{Binding Vendor}" x:DataType="vendorDtos:VendorDto">
+                <Label Text="{Binding BusinessName}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{Binding Bio}" TextColor="{StaticResource Gray500}" />
+                <Label Text="{Binding TrustBadgeStatus, StringFormat='Trust badge: {0}'}" TextColor="{StaticResource NestHubOrange}" />
+                <Label Text="{Binding AverageRating, StringFormat='★ {0:0.0} average rating'}" />
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Spacing="12">
+                <Button Text="Call" Command="{Binding CallCommand}" BackgroundColor="{StaticResource NestHubNavy}" />
+                <Button Text="WhatsApp" Command="{Binding WhatsAppCommand}" BackgroundColor="{StaticResource NestHubOrange}" />
+            </HorizontalStackLayout>
+
+            <Label Text="NestHub is a discovery platform only. We do not vet or guarantee vendor service quality — all transactions are between you and the vendor directly."
+                   FontSize="11" TextColor="{StaticResource Gray500}" />
+
+            <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+
+            <Label Text="Reviews from your neighbors" FontAttributes="Bold" FontSize="18" />
+            <Label Text="Shown only to residents of your own society — the most trustworthy recommendation there is." FontSize="12" TextColor="{StaticResource Gray500}" />
+
+            <CollectionView ItemsSource="{Binding NeighborReviews}" HeightRequest="260">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="reviewDtos:ReviewDto">
+                        <VerticalStackLayout Padding="0,8" Spacing="2">
+                            <Label Text="{Binding Rating, StringFormat='★ {0}/5'}" FontAttributes="Bold" />
+                            <Label Text="{Binding Comment}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
+
+            <Label Text="Leave a review" FontAttributes="Bold" />
+            <HorizontalStackLayout Spacing="12">
+                <Label Text="Rating:" VerticalOptions="Center" />
+                <Stepper Minimum="1" Maximum="5" Increment="1" Value="{Binding NewReviewRating}" />
+                <Label Text="{Binding NewReviewRating, StringFormat='{0} / 5'}" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Editor Placeholder="Share your experience with your neighbors" Text="{Binding NewReviewComment}" HeightRequest="80" />
+            <Button Text="Submit review" Command="{Binding SubmitReviewCommand}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

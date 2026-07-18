@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Resident.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="NestHub">
+
+    <VerticalStackLayout Padding="24" Spacing="16">
+        <HorizontalStackLayout Spacing="0">
+            <Label Text="Nest" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource NestHubNavy}" />
+            <Label Text="Hub" FontSize="28" FontAttributes="Bold" TextColor="{StaticResource NestHubOrange}" />
+        </HorizontalStackLayout>
+
+        <Label Text="Find a trusted vendor recommended by your own neighbors." FontSize="16" TextColor="{StaticResource Gray500}" />
+
+        <Button Text="Search vendors" Clicked="OnSearchVendorsClicked" />
+
+        <Frame BorderColor="{StaticResource NestHubOrange}" Padding="16" CornerRadius="12">
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Need urgent help?" FontAttributes="Bold" />
+                <Label Text="Use the SOS tab to broadcast an urgent request to vendors serving your society." />
+            </VerticalStackLayout>
+        </Frame>
+    </VerticalStackLayout>
+</ContentPage>

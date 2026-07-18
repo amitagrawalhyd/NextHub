@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="NestHub.Mobile.Views.Resident.SosPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodels="clr-namespace:NestHub.Mobile.ViewModels.Resident"
+    x:DataType="viewmodels:SosViewModel"
+    Title="SOS">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+
+            <Label Text="Urgent Request" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource NestHubOrange}" />
+            <Label Text="Broadcast your emergency to every approved vendor serving your society in the matching category. They'll be notified instantly."
+                   TextColor="{StaticResource Gray500}" />
+
+            <Picker Title="Category" SelectedItem="{Binding Category}">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Plumbing</x:String>
+                        <x:String>Electrical</x:String>
+                        <x:String>Home Maintenance</x:String>
+                        <x:String>Appliance Repair</x:String>
+                        <x:String>Pest Control</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Editor Placeholder="Describe the emergency (e.g. 'Leaking pipe in kitchen!')" Text="{Binding Description}" HeightRequest="100" />
+
+            <Button Text="Send SOS" BackgroundColor="{StaticResource NestHubOrange}" Command="{Binding SendSosCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Label Text="{Binding ConfirmationMessage}" TextColor="Green" IsVisible="{Binding ConfirmationMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

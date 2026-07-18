@@ -1,0 +1,33 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+
+## Visual Studio
+.vs/
+*.userprefs
+
+## Rider
+.idea/
+
+## Test results
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+
+## MAUI / mobile build artifacts
+*.apk
+*.aab
+*.ipa
+*.app
+*.dSYM/
+
+## EF Core
+**/Migrations/*.Designer.cs.bak
+
+## Secrets
+appsettings.*.local.json
+*.pfx
+*.snk

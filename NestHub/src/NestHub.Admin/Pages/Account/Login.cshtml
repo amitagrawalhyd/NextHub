@@ -1,0 +1,37 @@
+@page
+@model NestHub.Admin.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign in";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Sign in - NestHub Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body class="bg-light">
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="card shadow-sm" style="width: 24rem;">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-1"><span style="color:#1F5C99;">Nest</span><span style="color:#F2872E;">Hub</span></h4>
+                <p class="text-center text-muted mb-4">Admin Portal</p>
+
+                <form method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Input.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Input.PhoneNumber" class="form-control" autofocus />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label"></label>
+                        <input asp-for="Input.Password" class="form-control" type="password" />
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

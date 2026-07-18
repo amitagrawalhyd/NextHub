@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="NestHub.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:resident="clr-namespace:NestHub.Mobile.Views.Resident"
+    xmlns:vendor="clr-namespace:NestHub.Mobile.Views.Vendor"
+    xmlns:views="clr-namespace:NestHub.Mobile.Views"
+    Title="NestHub"
+    FlyoutBehavior="Disabled">
+
+    <ShellContent
+        Route="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Shell.NavBarIsVisible="False" />
+
+    <TabBar Route="ResidentShell">
+        <ShellContent Route="Home" Title="Home" ContentTemplate="{DataTemplate resident:HomePage}" />
+        <ShellContent Route="Search" Title="Search" ContentTemplate="{DataTemplate resident:VendorSearchPage}" />
+        <ShellContent Route="Sos" Title="SOS" ContentTemplate="{DataTemplate resident:SosPage}" />
+    </TabBar>
+
+    <TabBar Route="VendorShell">
+        <ShellContent Route="Dashboard" Title="Dashboard" ContentTemplate="{DataTemplate vendor:DashboardPage}" />
+        <ShellContent Route="SosLeads" Title="SOS Leads" ContentTemplate="{DataTemplate vendor:SosLeadsPage}" />
+    </TabBar>
+
+</Shell>
