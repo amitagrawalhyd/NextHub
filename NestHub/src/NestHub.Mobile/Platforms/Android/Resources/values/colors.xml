@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#512BD4</color>
-    <color name="colorPrimaryDark">#2B0B98</color>
-    <color name="colorAccent">#2B0B98</color>
+    <!-- Kept in sync with the NestHub brand palette in Resources\Styles\Colors.xaml
+         (Primary / Tertiary / Secondary) so Android's native chrome (splash background,
+         status bar, checkboxes, alert dialogs) matches iOS instead of the MAUI template defaults. -->
+    <color name="colorPrimary">#1F5C99</color>
+    <color name="colorPrimaryDark">#123A61</color>
+    <color name="colorAccent">#F2872E</color>
 </resources>
