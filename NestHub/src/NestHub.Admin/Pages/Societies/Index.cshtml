@@ -33,6 +33,7 @@ else
             <th>Address</th>
             <th>City</th>
             <th>Status</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -43,6 +44,34 @@ else
                 <td>@society.Address</td>
                 <td>@society.City</td>
                 <td><span class="badge @(society.IsActive ? "bg-success" : "bg-secondary")">@(society.IsActive ? "Active" : "Inactive")</span></td>
+                <td>
+                    <details>
+                        <summary class="btn btn-outline-primary btn-sm">Edit</summary>
+                        <form method="post" asp-page-handler="Update" asp-route-societyId="@society.Id" class="row g-2 mt-2" style="max-width: 30rem;">
+                            <div class="col-12">
+                                <input name="name" class="form-control form-control-sm" value="@society.Name" placeholder="Name" required />
+                            </div>
+                            <div class="col-12">
+                                <input name="address" class="form-control form-control-sm" value="@society.Address" placeholder="Address" required />
+                            </div>
+                            <div class="col-6">
+                                <input name="latitude" type="number" step="any" class="form-control form-control-sm" value="@society.GeoLocation?.Latitude" placeholder="Latitude" />
+                            </div>
+                            <div class="col-6">
+                                <input name="longitude" type="number" step="any" class="form-control form-control-sm" value="@society.GeoLocation?.Longitude" placeholder="Longitude" />
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                            </div>
+                        </form>
+                    </details>
+                    @if (Model.ScopedSocietyId is null)
+                    {
+                        <form method="post" asp-page-handler="SetActive" asp-route-societyId="@society.Id" asp-route-isActive="@(!society.IsActive)" class="d-inline mt-2">
+                            <button type="submit" class="btn @(society.IsActive ? "btn-outline-secondary" : "btn-outline-success") btn-sm">@(society.IsActive ? "Deactivate" : "Activate")</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>

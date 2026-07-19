@@ -40,7 +40,9 @@ public sealed class GetAllResidentsQueryHandler : IRequestHandler<GetAllResident
                 societies.TryGetValue(r.SocietyId, out var societyName) ? societyName : "(unknown)",
                 r.BlockNumber,
                 r.FlatNumber,
-                users.TryGetValue(r.UserId, out var u2) && u2.IsActive))
+                users.TryGetValue(r.UserId, out var u2) && u2.IsActive,
+                r.SocietyId.Value,
+                r.UserId.Value))
             .ToList();
     }
 }

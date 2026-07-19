@@ -7,4 +7,6 @@ public sealed record AdminResidentDto(
     string SocietyName,
     string BlockNumber,
     string FlatNumber,
-    bool IsActive);
+    bool IsActive,
+    Guid SocietyId,
+    Guid UserId);

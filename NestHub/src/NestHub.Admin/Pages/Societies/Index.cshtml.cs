@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NestHub.Admin.Common;
 using NestHub.Application.Societies.Commands.RegisterSociety;
+using NestHub.Application.Societies.Commands.SetSocietyActive;
+using NestHub.Application.Societies.Commands.UpdateSociety;
 using NestHub.Application.Societies.Dtos;
 using NestHub.Application.Societies.Queries.GetActiveSocieties;
 
@@ -37,6 +39,29 @@ public sealed class IndexModel : PageModel
         if (!string.IsNullOrWhiteSpace(NewSociety.Name) && !string.IsNullOrWhiteSpace(NewSociety.Address))
             await _sender.Send(NewSociety);
 
+        return RedirectToPage();
+    }
+
+    /// <summary>
+    /// A Society Admin may edit only their own society; a Central Admin may edit any of them.
+    /// </summary>
+    public async Task<IActionResult> OnPostUpdateAsync(Guid societyId, string name, string address, double? latitude, double? longitude)
+    {
+        if (User.GetSocietyId() is { } scopedSocietyId && scopedSocietyId != societyId)
+            return RedirectToPage();
+
+        if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(address))
+            await _sender.Send(new UpdateSocietyCommand(societyId, name, address, latitude, longitude));
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostSetActiveAsync(Guid societyId, bool isActive)
+    {
+        if (User.GetSocietyId() is not null)
+            return RedirectToPage();
+
+        await _sender.Send(new SetSocietyActiveCommand(societyId, isActive));
         return RedirectToPage();
     }
 }

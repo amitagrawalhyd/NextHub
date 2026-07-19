@@ -1,0 +1,84 @@
+@page
+@model NestHub.Admin.Pages.SocietyAdmins.IndexModel
+@{
+    ViewData["Title"] = "Society Admins";
+}
+
+<h1>Society Admins</h1>
+<p class="text-muted">Admin accounts scoped to manage a single society. Create one here to hand off day-to-day management of a society to its own admin, separate from Central Admins.</p>
+
+<h4 class="mt-4">Create Society Admin</h4>
+<form method="post" asp-page-handler="Create" class="row g-2 mb-4" style="max-width: 40rem;">
+    <div class="col-12">
+        <input name="phoneNumber" class="form-control" placeholder="Phone number" required />
+    </div>
+    <div class="col-12">
+        <input name="email" type="email" class="form-control" placeholder="Email (optional)" />
+    </div>
+    <div class="col-12">
+        <input name="password" type="password" class="form-control" placeholder="Password" required minlength="8" />
+    </div>
+    <div class="col-12">
+        <select name="societyId" class="form-select" required>
+            <option value="">Select a society&hellip;</option>
+            @foreach (var society in Model.AllSocieties)
+            {
+                <option value="@society.Id">@society.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Create Society Admin</button>
+    </div>
+</form>
+
+<h4 class="mt-5">Existing Society Admins (@Model.SocietyAdmins.Count)</h4>
+@if (Model.SocietyAdmins.Count == 0)
+{
+    <p class="text-muted empty-state">No society admins have been created yet.</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Society</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var admin in Model.SocietyAdmins)
+            {
+                <tr>
+                    <td>@admin.PhoneNumber</td>
+                    <td>@admin.Email</td>
+                    <td>@admin.SocietyName</td>
+                    <td>
+                        <span class="badge @(admin.IsActive ? "bg-success" : "bg-secondary")">@(admin.IsActive ? "Active" : "Deactivated")</span>
+                    </td>
+                    <td>
+                        <form method="post" asp-page-handler="Reassign" asp-route-userId="@admin.Id" class="d-inline">
+                            <select name="societyId" class="form-select form-select-sm d-inline w-auto">
+                                @foreach (var society in Model.AllSocieties)
+                                {
+                                    <option value="@society.Id" selected="@(society.Id == admin.SocietyId)">@society.Name</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Reassign</button>
+                        </form>
+                        <form method="post" asp-page-handler="ResetPassword" asp-route-userId="@admin.Id" class="d-inline" onsubmit="return confirm('Reset password for @admin.PhoneNumber?');">
+                            <input type="text" name="newPassword" class="form-control form-control-sm d-inline w-auto" placeholder="New password" required minlength="8" />
+                            <button type="submit" class="btn btn-outline-primary btn-sm">Reset password</button>
+                        </form>
+                        <form method="post" asp-page-handler="SetActive" asp-route-userId="@admin.Id" asp-route-isActive="@(!admin.IsActive)" class="d-inline">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">@(admin.IsActive ? "Deactivate" : "Activate")</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

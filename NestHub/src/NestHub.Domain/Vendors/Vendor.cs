@@ -59,7 +59,7 @@ public sealed class Vendor : AggregateRoot<VendorId>
         RaiseDomainEvent(new VendorApprovedDomainEvent(Id));
     }
 
-    public void UpdateProfile(string businessName, string? bio, string? logoUrl, OperatingHours operatingHours)
+    public void UpdateProfile(string businessName, string? bio, string? logoUrl, PhoneNumber whatsAppNumber, OperatingHours operatingHours)
     {
         if (string.IsNullOrWhiteSpace(businessName))
             throw new ArgumentException("Business name is required.", nameof(businessName));
@@ -67,6 +67,7 @@ public sealed class Vendor : AggregateRoot<VendorId>
         BusinessName = businessName.Trim();
         Bio = bio?.Trim();
         LogoUrl = logoUrl;
+        WhatsAppNumber = whatsAppNumber;
         OperatingHours = operatingHours;
     }
 

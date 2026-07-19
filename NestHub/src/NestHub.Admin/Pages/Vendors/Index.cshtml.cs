@@ -4,6 +4,7 @@ using NestHub.Admin.Common;
 using NestHub.Application.Vendors.Commands.ApproveVendor;
 using NestHub.Application.Vendors.Commands.AwardTrustBadge;
 using NestHub.Application.Vendors.Commands.SetVendorFeatured;
+using NestHub.Application.Vendors.Commands.UpdateVendorProfile;
 using NestHub.Application.Vendors.Commands.UpgradeVendorSubscription;
 using NestHub.Application.Vendors.Dtos;
 using NestHub.Application.Vendors.Queries.GetPendingVendorApprovals;
@@ -47,6 +48,12 @@ public sealed class IndexModel : CentralAdminOnlyPageModel
     public async Task<IActionResult> OnPostSetFeaturedAsync(Guid vendorId, bool isFeatured)
     {
         await _sender.Send(new SetVendorFeaturedCommand(vendorId, isFeatured));
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostUpdateAsync(Guid vendorId, string businessName, string? bio, string? logoUrl, string whatsAppNumber)
+    {
+        await _sender.Send(new UpdateVendorProfileCommand(vendorId, businessName, bio, logoUrl, whatsAppNumber));
         return RedirectToPage();
     }
 

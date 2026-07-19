@@ -90,4 +90,28 @@ public class VendorTests
         vendor.TrustBadgeStatus.Should().Be(Enums.TrustBadgeStatus.IdVerified);
         vendor.DomainEvents.Should().Contain(e => e is TrustBadgeAwardedDomainEvent);
     }
+
+    [Fact]
+    public void UpdateProfile_UpdatesBusinessNameBioLogoAndWhatsAppNumber()
+    {
+        var vendor = CreateApprovedVendor();
+        var newWhatsAppNumber = PhoneNumber.Create("9123456780");
+
+        vendor.UpdateProfile("Sharma Plumbing & Electrical", "Now also doing electrical work.", "https://example.com/logo.png", newWhatsAppNumber, vendor.OperatingHours);
+
+        vendor.BusinessName.Should().Be("Sharma Plumbing & Electrical");
+        vendor.Bio.Should().Be("Now also doing electrical work.");
+        vendor.LogoUrl.Should().Be("https://example.com/logo.png");
+        vendor.WhatsAppNumber.Should().Be(newWhatsAppNumber);
+    }
+
+    [Fact]
+    public void UpdateProfile_WithBlankBusinessName_ThrowsArgumentException()
+    {
+        var vendor = CreateApprovedVendor();
+
+        var act = () => vendor.UpdateProfile(" ", null, null, vendor.WhatsAppNumber, vendor.OperatingHours);
+
+        act.Should().Throw<ArgumentException>();
+    }
 }

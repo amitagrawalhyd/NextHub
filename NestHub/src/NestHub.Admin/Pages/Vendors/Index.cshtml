@@ -84,6 +84,26 @@ else
                         <form method="post" asp-page-handler="SetFeatured" asp-route-vendorId="@vendor.Id" asp-route-isFeatured="@(!vendor.IsFeatured)" class="d-inline">
                             <button type="submit" class="btn @(vendor.IsFeatured ? "btn-secondary" : "btn-outline-secondary") btn-sm">@(vendor.IsFeatured ? "Unfeature" : "Feature")</button>
                         </form>
+                        <details class="d-inline-block">
+                            <summary class="btn btn-outline-primary btn-sm">Edit</summary>
+                            <form method="post" asp-page-handler="Update" asp-route-vendorId="@vendor.Id" class="row g-2 mt-2" style="max-width: 30rem;">
+                                <div class="col-12">
+                                    <input name="businessName" class="form-control form-control-sm" value="@vendor.BusinessName" placeholder="Business name" required />
+                                </div>
+                                <div class="col-12">
+                                    <input name="whatsAppNumber" class="form-control form-control-sm" value="@vendor.WhatsAppNumber" placeholder="WhatsApp number" required />
+                                </div>
+                                <div class="col-12">
+                                    <input name="logoUrl" class="form-control form-control-sm" value="@vendor.LogoUrl" placeholder="Logo URL" />
+                                </div>
+                                <div class="col-12">
+                                    <textarea name="bio" class="form-control form-control-sm" placeholder="Bio">@vendor.Bio</textarea>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                </div>
+                            </form>
+                        </details>
                     </td>
                 </tr>
             }

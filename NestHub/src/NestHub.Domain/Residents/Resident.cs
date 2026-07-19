@@ -38,14 +38,18 @@ public sealed class Resident : AggregateRoot<ResidentId>
         return resident;
     }
 
-    public void UpdateFlatDetails(string blockNumber, string flatNumber)
+    public void UpdateDetails(string name, string blockNumber, string flatNumber, SocietyId societyId)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Name is required.", nameof(name));
         if (string.IsNullOrWhiteSpace(blockNumber))
             throw new ArgumentException("Block number is required.", nameof(blockNumber));
         if (string.IsNullOrWhiteSpace(flatNumber))
             throw new ArgumentException("Flat number is required.", nameof(flatNumber));
 
+        Name = name.Trim();
         BlockNumber = blockNumber.Trim();
         FlatNumber = flatNumber.Trim();
+        SocietyId = societyId;
     }
 }

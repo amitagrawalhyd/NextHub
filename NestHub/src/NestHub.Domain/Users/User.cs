@@ -64,4 +64,9 @@ public sealed class User : AggregateRoot<UserId>
     public void Deactivate() => IsActive = false;
 
     public void Activate() => IsActive = true;
+
+    /// <summary>
+    /// Reassigns which society an Admin user is scoped to (null = Central Admin).
+    /// </summary>
+    public void AssignToSociety(SocietyId? societyId) => SocietyId = societyId;
 }

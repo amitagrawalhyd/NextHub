@@ -5,7 +5,7 @@
 }
 
 <h1>Residents</h1>
-<p class="text-muted">Every onboarded resident across all societies. Reset a password or suspend an account from <a asp-page="/Users/Index">User Accounts</a>.</p>
+<p class="text-muted">Every onboarded resident @(Model.ScopedSocietyId is not null ? "in your society" : "across all societies"). Reset a password from <a asp-page="/Users/Index">User Accounts</a>.</p>
 
 @if (Model.Residents.Count == 0)
 {
@@ -22,6 +22,7 @@ else
                 <th>Block</th>
                 <th>Flat</th>
                 <th>Status</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,43 @@ else
                     <td>@resident.FlatNumber</td>
                     <td>
                         <span class="badge @(resident.IsActive ? "bg-success" : "bg-secondary")">@(resident.IsActive ? "Active" : "Deactivated")</span>
+                    </td>
+                    <td>
+                        <details class="d-inline-block">
+                            <summary class="btn btn-outline-primary btn-sm">Edit</summary>
+                            <form method="post" asp-page-handler="Update" asp-route-residentId="@resident.Id" class="row g-2 mt-2" style="max-width: 26rem;">
+                                <div class="col-12">
+                                    <input name="name" class="form-control form-control-sm" value="@resident.Name" placeholder="Name" required />
+                                </div>
+                                <div class="col-6">
+                                    <input name="blockNumber" class="form-control form-control-sm" value="@resident.BlockNumber" placeholder="Block" required />
+                                </div>
+                                <div class="col-6">
+                                    <input name="flatNumber" class="form-control form-control-sm" value="@resident.FlatNumber" placeholder="Flat" required />
+                                </div>
+                                <div class="col-12">
+                                    @if (Model.ScopedSocietyId is not null)
+                                    {
+                                        <input type="hidden" name="societyId" value="@resident.SocietyId" />
+                                    }
+                                    else
+                                    {
+                                        <select name="societyId" class="form-select form-select-sm">
+                                            @foreach (var society in Model.AllSocieties)
+                                            {
+                                                <option value="@society.Id" selected="@(society.Id == resident.SocietyId)">@society.Name</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                                </div>
+                            </form>
+                        </details>
+                        <form method="post" asp-page-handler="SetActive" asp-route-residentId="@resident.Id" asp-route-userId="@resident.UserId" asp-route-isActive="@(!resident.IsActive)" class="d-inline mt-2">
+                            <button type="submit" class="btn @(resident.IsActive ? "btn-outline-secondary" : "btn-outline-success") btn-sm">@(resident.IsActive ? "Deactivate" : "Activate")</button>
+                        </form>
                     </td>
                 </tr>
             }
