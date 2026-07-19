@@ -87,8 +87,10 @@ public sealed partial class VendorSearchViewModel : ObservableObject
             if (!string.IsNullOrWhiteSpace(SearchQuery))
                 AddRecentSearch(SearchQuery);
 
-            var results = await _apiClient.SearchVendorsAsync(SearchQuery, null, _residentSocietyId);
-            _allResults = results.ToList();
+            // Client-side tier filtering (below) still expects the full result set, not one
+            // page — a large pageSize preserves that behavior on top of the now-paginated API.
+            var results = await _apiClient.SearchVendorsAsync(SearchQuery, null, _residentSocietyId, page: 1, pageSize: 200);
+            _allResults = results.Items.ToList();
             IsOffline = false;
 
             if (string.IsNullOrWhiteSpace(SearchQuery))

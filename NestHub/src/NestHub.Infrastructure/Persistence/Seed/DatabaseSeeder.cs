@@ -78,27 +78,33 @@ public static class DatabaseSeeder
         }
 
         // ---- Vendors ----
-        var vendorSeeds = new (string Phone, string Business, string WhatsApp, string Bio, bool Approved, SubscriptionTier Tier, TrustBadgeStatus Badge, (string Title, string Desc, string Category, PricingType PType, decimal? Amount)[] Services)[]
+        // Latitude/longitude chosen to demonstrate every proximity tier out of the box:
+        // Sharma/GreenLeaf sit exactly on their home society's pin (InHouse, set explicitly
+        // below); BrightSpark/MathGenius sit a few km from a society (auto-Nearby, computed
+        // the same way RecomputeVendorProximityCommand would); QuickFix sits ~27km from every
+        // society (Other/far — fittingly, also the one vendor still pending approval).
+        var vendorSeeds = new (string Phone, string Business, string WhatsApp, string Bio, bool Approved, SubscriptionTier Tier, TrustBadgeStatus Badge, double? Latitude, double? Longitude, (string Title, string Desc, string Category, PricingType PType, decimal? Amount)[] Services)[]
         {
-            ("9000000201", "Sharma Plumbing Works", "9876543210", "24x7 reliable plumbing services across Hyderabad.", true, SubscriptionTier.Premium, TrustBadgeStatus.IdVerified,
+            ("9000000201", "Sharma Plumbing Works", "9876543210", "24x7 reliable plumbing services across Hyderabad.", true, SubscriptionTier.Premium, TrustBadgeStatus.IdVerified, 17.4448, 78.3498,
                 new[] { ("Tap & Pipe Repair", "Fix leaking taps and pipes.", "Plumbing", PricingType.StartingFrom, (decimal?)300), ("Bathroom Fitting", "Full bathroom fixture installation.", "Plumbing", PricingType.ContactForQuote, (decimal?)null) }),
-            ("9000000202", "BrightSpark Electricians", "9876543211", "Licensed electricians for home and society wiring.", true, SubscriptionTier.Free, TrustBadgeStatus.SocietyRegular,
+            ("9000000202", "BrightSpark Electricians", "9876543211", "Licensed electricians for home and society wiring.", true, SubscriptionTier.Free, TrustBadgeStatus.SocietyRegular, 17.4700, 78.3300,
                 new[] { ("Wiring Repair", "Fix faulty wiring and switches.", "Electrical", PricingType.Hourly, (decimal?)250) }),
-            ("9000000203", "GreenLeaf Pest Control", "9876543212", "Eco-friendly pest control for apartments.", true, SubscriptionTier.Free, TrustBadgeStatus.None,
+            ("9000000203", "GreenLeaf Pest Control", "9876543212", "Eco-friendly pest control for apartments.", true, SubscriptionTier.Free, TrustBadgeStatus.None, 17.4045, 78.3210,
                 new[] { ("General Pest Treatment", "Cockroach and ant treatment.", "Pest Control", PricingType.Fixed, (decimal?)1200) }),
-            ("9000000204", "MathGenius Tutoring", "9876543213", "Home tuition for grades 6-12, Math and Science.", true, SubscriptionTier.Premium, TrustBadgeStatus.IdVerified,
+            ("9000000204", "MathGenius Tutoring", "9876543213", "Home tuition for grades 6-12, Math and Science.", true, SubscriptionTier.Premium, TrustBadgeStatus.IdVerified, 17.4200, 78.3000,
                 new[] { ("Math Tuition", "One-on-one math coaching.", "Tutors", PricingType.Hourly, (decimal?)500) }),
-            ("9000000205", "QuickFix Appliance Repair", "9876543214", "Awaiting approval — new to NestHub.", false, SubscriptionTier.Free, TrustBadgeStatus.None,
+            ("9000000205", "QuickFix Appliance Repair", "9876543214", "Awaiting approval — new to NestHub.", false, SubscriptionTier.Free, TrustBadgeStatus.None, 17.3000, 78.5500,
                 Array.Empty<(string, string, string, PricingType, decimal?)>()),
         };
 
         var vendors = new List<(User User, Vendor Vendor)>();
-        foreach (var (phone, business, whatsApp, bio, approved, tier, badge, services) in vendorSeeds)
+        foreach (var (phone, business, whatsApp, bio, approved, tier, badge, latitude, longitude, services) in vendorSeeds)
         {
             var user = User.Register(PhoneNumber.Create(phone), null, passwordHash, UserType.Vendor);
             user.MarkVerified();
 
-            var vendor = Vendor.Register(user.Id, business, PhoneNumber.Create(whatsApp), bio, OperatingHours.AlwaysOpen());
+            var location = latitude.HasValue && longitude.HasValue ? GeoLocation.Create(latitude.Value, longitude.Value) : null;
+            var vendor = Vendor.Register(user.Id, business, PhoneNumber.Create(whatsApp), bio, OperatingHours.AlwaysOpen(), location);
             if (approved)
             {
                 vendor.Approve();
@@ -125,7 +131,19 @@ public static class DatabaseSeeder
 
         var plumber = vendors[0].Vendor;
         var electrician = vendors[1].Vendor;
+        var pestControl = vendors[2].Vendor;
         var tutor = vendors[3].Vendor;
+
+        // ---- Vendor/society affiliations ----
+        // Seeded directly here (rather than relying on VendorLocationChangedDomainEvent, which
+        // this seeder's single bulk SaveChangesAsync at the end never dispatches) so the demo
+        // data shows every tier immediately: InHouse set explicitly, Nearby computed by hand
+        // using the exact same 5km radius RecomputeVendorProximityCommand uses at runtime.
+        context.VendorSocietyCoverages.Add(VendorSocietyCoverage.Create(plumber.Id, lakeview.Id, AffiliationType.InHouse));
+        context.VendorSocietyCoverages.Add(VendorSocietyCoverage.Create(pestControl.Id, myHome.Id, AffiliationType.InHouse));
+        context.VendorSocietyCoverages.Add(VendorSocietyCoverage.Create(electrician.Id, lakeview.Id, AffiliationType.Nearby));
+        context.VendorSocietyCoverages.Add(VendorSocietyCoverage.Create(electrician.Id, greenMeadows.Id, AffiliationType.Nearby));
+        context.VendorSocietyCoverages.Add(VendorSocietyCoverage.Create(tutor.Id, myHome.Id, AffiliationType.Nearby));
 
         // ---- Reviews (demonstrates neighbor-verified filtering: same vendor, different societies) ----
         var reviewSeeds = new (Domain.Residents.Resident Resident, Vendor Vendor, int Rating, string Comment, bool Flag)[]

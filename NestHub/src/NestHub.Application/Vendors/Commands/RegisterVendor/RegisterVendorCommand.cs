@@ -9,7 +9,7 @@ using NestHub.Domain.Vendors;
 
 namespace NestHub.Application.Vendors.Commands.RegisterVendor;
 
-public sealed record RegisterVendorCommand(Guid UserId, string BusinessName, string WhatsAppNumber, string? Bio) : IRequest<VendorDto>;
+public sealed record RegisterVendorCommand(Guid UserId, string BusinessName, string WhatsAppNumber, string? Bio, double? Latitude = null, double? Longitude = null) : IRequest<VendorDto>;
 
 public sealed class RegisterVendorCommandValidator : AbstractValidator<RegisterVendorCommand>
 {
@@ -35,7 +35,10 @@ public sealed class RegisterVendorCommandHandler : IRequestHandler<RegisterVendo
     public async Task<VendorDto> Handle(RegisterVendorCommand request, CancellationToken cancellationToken)
     {
         var whatsAppNumber = PhoneNumber.Create(request.WhatsAppNumber);
-        var vendor = Vendor.Register(new UserId(request.UserId), request.BusinessName, whatsAppNumber, request.Bio, OperatingHours.AlwaysOpen());
+        var location = request.Latitude.HasValue && request.Longitude.HasValue
+            ? GeoLocation.Create(request.Latitude.Value, request.Longitude.Value)
+            : null;
+        var vendor = Vendor.Register(new UserId(request.UserId), request.BusinessName, whatsAppNumber, request.Bio, OperatingHours.AlwaysOpen(), location);
 
         _vendorRepository.Add(vendor);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

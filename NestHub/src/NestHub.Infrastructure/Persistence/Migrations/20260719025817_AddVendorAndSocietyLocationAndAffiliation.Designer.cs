@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NestHub.Infrastructure.Persistence;
 using NetTopologySuite.Geometries;
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace NestHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NestHubDbContext))]
-    partial class NestHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260719025817_AddVendorAndSocietyLocationAndAffiliation")]
+    partial class AddVendorAndSocietyLocationAndAffiliation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

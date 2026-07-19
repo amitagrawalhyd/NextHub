@@ -44,6 +44,11 @@ public sealed class VendorConfiguration : IEntityTypeConfiguration<Vendor>
         builder.Property(v => v.IsApproved).IsRequired();
         builder.Property(v => v.IsFeatured).IsRequired().HasDefaultValue(false);
 
+        builder.Property(v => v.Location)
+            .HasColumnName("Location")
+            .HasColumnType("geography");
+        builder.Ignore(v => v.GeoLocation);
+
         builder.HasMany(v => v.Services)
             .WithOne()
             .HasForeignKey(s => s.VendorId)

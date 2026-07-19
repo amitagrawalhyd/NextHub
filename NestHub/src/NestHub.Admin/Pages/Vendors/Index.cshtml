@@ -1,4 +1,5 @@
 @page
+@using NestHub.Application.Vendors.Common
 @model NestHub.Admin.Pages.Vendors.IndexModel
 @{
     ViewData["Title"] = "Vendor Approvals";
@@ -17,6 +18,7 @@ else
     <table class="table table-striped align-middle">
         <thead>
             <tr>
+                <th>Logo</th>
                 <th>Business Name</th>
                 <th>WhatsApp</th>
                 <th>Bio</th>
@@ -27,6 +29,7 @@ else
             @foreach (var vendor in Model.PendingVendors)
             {
                 <tr>
+                    <td>@await Html.PartialAsync("_VendorLogo", vendor)</td>
                     <td>@vendor.BusinessName</td>
                     <td>@vendor.WhatsAppNumber</td>
                     <td>@vendor.Bio</td>
@@ -51,6 +54,7 @@ else
     <table class="table table-striped align-middle">
         <thead>
             <tr>
+                <th>Logo</th>
                 <th>Business Name</th>
                 <th>Subscription</th>
                 <th>Trust Badge</th>
@@ -62,6 +66,7 @@ else
             @foreach (var vendor in Model.ApprovedVendors)
             {
                 <tr>
+                    <td>@await Html.PartialAsync("_VendorLogo", vendor)</td>
                     <td>@vendor.BusinessName</td>
                     <td>@vendor.SubscriptionTier</td>
                     <td>@vendor.TrustBadgeStatus</td>
@@ -99,9 +104,31 @@ else
                                 <div class="col-12">
                                     <textarea name="bio" class="form-control form-control-sm" placeholder="Bio">@vendor.Bio</textarea>
                                 </div>
+                                <div class="col-6">
+                                    <input name="latitude" type="number" step="any" class="form-control form-control-sm" value="@vendor.GeoLocation?.Latitude" placeholder="Latitude" />
+                                </div>
+                                <div class="col-6">
+                                    <input name="longitude" type="number" step="any" class="form-control form-control-sm" value="@vendor.GeoLocation?.Longitude" placeholder="Longitude" />
+                                </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary btn-sm">Save</button>
                                 </div>
+                            </form>
+                        </details>
+                        <details class="d-inline-block">
+                            <summary class="btn btn-outline-secondary btn-sm">In-house society</summary>
+                            <form method="post" asp-page-handler="SetInHouseSociety" asp-route-vendorId="@vendor.Id" class="d-inline mt-2">
+                                @{
+                                    var currentInHouseId = Model.InHouseSocietyByVendorId.GetValueOrDefault(vendor.Id);
+                                }
+                                <select name="societyId" class="form-select form-select-sm d-inline w-auto">
+                                    <option value="">None</option>
+                                    @foreach (var society in Model.AllSocieties)
+                                    {
+                                        <option value="@society.Id" selected="@(society.Id == currentInHouseId)">@society.Name</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-outline-secondary btn-sm">Set</button>
                             </form>
                         </details>
                     </td>

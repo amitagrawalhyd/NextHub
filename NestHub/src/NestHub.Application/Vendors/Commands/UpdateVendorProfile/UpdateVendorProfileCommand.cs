@@ -10,7 +10,7 @@ using NestHub.Domain.Vendors;
 
 namespace NestHub.Application.Vendors.Commands.UpdateVendorProfile;
 
-public sealed record UpdateVendorProfileCommand(Guid VendorId, string BusinessName, string? Bio, string? LogoUrl, string WhatsAppNumber) : IRequest<VendorDto>;
+public sealed record UpdateVendorProfileCommand(Guid VendorId, string BusinessName, string? Bio, string? LogoUrl, string WhatsAppNumber, double? Latitude = null, double? Longitude = null) : IRequest<VendorDto>;
 
 public sealed class UpdateVendorProfileCommandValidator : AbstractValidator<UpdateVendorProfileCommand>
 {
@@ -39,8 +39,11 @@ public sealed class UpdateVendorProfileCommandHandler : IRequestHandler<UpdateVe
             ?? throw new NotFoundException(nameof(Vendor), request.VendorId);
 
         var whatsAppNumber = PhoneNumber.Create(request.WhatsAppNumber);
+        var location = request.Latitude.HasValue && request.Longitude.HasValue
+            ? GeoLocation.Create(request.Latitude.Value, request.Longitude.Value)
+            : null;
 
-        vendor.UpdateProfile(request.BusinessName, request.Bio, request.LogoUrl, whatsAppNumber, vendor.OperatingHours);
+        vendor.UpdateProfile(request.BusinessName, request.Bio, request.LogoUrl, whatsAppNumber, vendor.OperatingHours, location);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return vendor.ToDto();

@@ -11,9 +11,11 @@ using NestHub.Application.Vendors.Commands.MuteVendor;
 using NestHub.Application.Vendors.Commands.RegisterVendor;
 using NestHub.Application.Vendors.Commands.RemoveFavorite;
 using NestHub.Application.Vendors.Commands.SetVendorCoverage;
+using NestHub.Application.Vendors.Commands.SetVendorInHouseSociety;
 using NestHub.Application.Vendors.Commands.UnmuteVendor;
 using NestHub.Application.Vendors.Commands.UpgradeVendorSubscription;
 using NestHub.Application.Vendors.Dtos;
+using NestHub.Application.Common.Models;
 using NestHub.Application.Vendors.Queries.GetMyVendorProfile;
 using NestHub.Application.Vendors.Queries.GetPendingVendorApprovals;
 using NestHub.Application.Vendors.Queries.GetVendorCoverage;
@@ -32,10 +34,16 @@ public sealed class VendorsController : ControllerBase
 
     [HttpGet("search")]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(IReadOnlyList<VendorDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> Search([FromQuery] string? query, [FromQuery] string? category, [FromQuery] Guid? residentSocietyId, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(PagedResult<VendorDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Search(
+        [FromQuery] string? query,
+        [FromQuery] string? category,
+        [FromQuery] Guid? residentSocietyId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        var vendors = await _sender.Send(new SearchVendorsQuery(query, category, residentSocietyId), cancellationToken);
+        var vendors = await _sender.Send(new SearchVendorsQuery(query, category, residentSocietyId, page, pageSize), cancellationToken);
         return Ok(vendors);
     }
 
@@ -132,6 +140,15 @@ public sealed class VendorsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPut("{id:guid}/in-house-society")]
+    [Authorize(Roles = "Admin")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> SetInHouseSociety(Guid id, SetInHouseSocietyRequestBody body, CancellationToken cancellationToken)
+    {
+        await _sender.Send(new SetVendorInHouseSocietyCommand(id, body.SocietyId), cancellationToken);
+        return NoContent();
+    }
+
     [HttpPost("{id:guid}/favorite")]
     [Authorize(Roles = "Resident")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -186,6 +203,8 @@ public sealed class VendorsController : ControllerBase
 }
 
 public sealed record SetCoverageRequestBody(IReadOnlyList<Guid> SocietyIds);
+
+public sealed record SetInHouseSocietyRequestBody(Guid? SocietyId);
 
 public sealed record AwardTrustBadgeRequest(Domain.Enums.TrustBadgeStatus Badge);
 

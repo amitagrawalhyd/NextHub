@@ -1,4 +1,5 @@
 using System.Globalization;
+using NestHub.Application.Vendors.Common;
 using NestHub.Mobile.Resources.Strings;
 
 namespace NestHub.Mobile.Converters;
@@ -13,6 +14,13 @@ public sealed class InvertedBoolConverter : IValueConverter
 public sealed class StringNotEmptyConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => !string.IsNullOrWhiteSpace(value as string);
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
+}
+
+public sealed class StringIsEmptyConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => string.IsNullOrWhiteSpace(value as string);
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
 }
@@ -112,6 +120,25 @@ public sealed class TierToColorConverter : IValueConverter
         "Nearby" => Color.FromArgb("#2C7BB6"),
         _ => Color.FromArgb("#919191")
     };
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
+}
+
+/// <summary>Vendor logo fallback: emoji per category, shown in a colored circle when a vendor
+/// has no LogoUrl. Reuses NestHub.Application's VendorCategoryIcon so Admin (web) and Mobile
+/// never disagree on which icon/color represents a category.</summary>
+public sealed class CategoryToEmojiConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        VendorCategoryIcon.For(value as string ?? string.Empty).Emoji;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
+}
+
+public sealed class CategoryToColorConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        Color.FromArgb(VendorCategoryIcon.For(value as string ?? string.Empty).HexColor);
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
 }

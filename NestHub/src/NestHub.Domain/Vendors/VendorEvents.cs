@@ -12,3 +12,5 @@ public sealed record VendorUpgradedToPremiumDomainEvent(VendorId VendorId) : Dom
 public sealed record TrustBadgeAwardedDomainEvent(VendorId VendorId, TrustBadgeStatus Badge) : DomainEvent;
 
 public sealed record ServiceAddedDomainEvent(VendorId VendorId, ServiceId ServiceId) : DomainEvent;
+
+public sealed record VendorLocationChangedDomainEvent(VendorId VendorId) : DomainEvent;

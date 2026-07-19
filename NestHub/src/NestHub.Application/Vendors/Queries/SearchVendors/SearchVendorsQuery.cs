@@ -1,18 +1,23 @@
 using MediatR;
 using NestHub.Application.Common.Interfaces;
 using NestHub.Application.Common.Mapping;
+using NestHub.Application.Common.Models;
 using NestHub.Application.Vendors.Dtos;
 using NestHub.Domain.Common;
+using NestHub.Domain.Enums;
 using NestHub.Domain.Repositories;
-using NestHub.Domain.ValueObjects;
 
 namespace NestHub.Application.Vendors.Queries.SearchVendors;
 
-public sealed record SearchVendorsQuery(string? Query, string? Category, Guid? ResidentSocietyId = null) : IRequest<IReadOnlyList<VendorDto>>;
+public sealed record SearchVendorsQuery(
+    string? Query,
+    string? Category,
+    Guid? ResidentSocietyId = null,
+    int PageNumber = 1,
+    int PageSize = 20) : IRequest<PagedResult<VendorDto>>;
 
-public sealed class SearchVendorsQueryHandler : IRequestHandler<SearchVendorsQuery, IReadOnlyList<VendorDto>>
+public sealed class SearchVendorsQueryHandler : IRequestHandler<SearchVendorsQuery, PagedResult<VendorDto>>
 {
-    private const double NearbyRadiusKm = 5.0;
     private const string TierInHouse = "InHouse";
     private const string TierNearby = "Nearby";
     private const string TierOther = "Other";
@@ -20,21 +25,18 @@ public sealed class SearchVendorsQueryHandler : IRequestHandler<SearchVendorsQue
     private readonly IVendorRepository _vendorRepository;
     private readonly IAiService _aiService;
     private readonly IVendorSocietyCoverageRepository _coverageRepository;
-    private readonly ISocietyRepository _societyRepository;
 
     public SearchVendorsQueryHandler(
         IVendorRepository vendorRepository,
         IAiService aiService,
-        IVendorSocietyCoverageRepository coverageRepository,
-        ISocietyRepository societyRepository)
+        IVendorSocietyCoverageRepository coverageRepository)
     {
         _vendorRepository = vendorRepository;
         _aiService = aiService;
         _coverageRepository = coverageRepository;
-        _societyRepository = societyRepository;
     }
 
-    public async Task<IReadOnlyList<VendorDto>> Handle(SearchVendorsQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<VendorDto>> Handle(SearchVendorsQuery request, CancellationToken cancellationToken)
     {
         var candidates = string.IsNullOrWhiteSpace(request.Category)
             ? await _vendorRepository.GetAllApprovedAsync(cancellationToken)
@@ -70,73 +72,42 @@ public sealed class SearchVendorsQueryHandler : IRequestHandler<SearchVendorsQue
                 .ToList();
         }
 
-        if (request.ResidentSocietyId is null || results.Count == 0)
-            return results;
+        if (request.ResidentSocietyId is { } residentSocietyId && results.Count > 0)
+            results = await ApplyTiersAndSortAsync(results, residentSocietyId, cancellationToken);
 
-        return await ApplyTiersAsync(results, request.ResidentSocietyId.Value, cancellationToken);
+        var totalCount = results.Count;
+        var page = results
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .ToList();
+
+        return new PagedResult<VendorDto>(page, request.PageNumber, request.PageSize, totalCount);
     }
 
     /// <summary>
-    /// Single pass: fetch all coverage rows and all society geo-locations once, then classify
-    /// every result in memory. No per-vendor round trips.
+    /// Tiers come from a single indexed lookup — VendorSocietyCoverages rows for the resident's
+    /// own society, already maintained event-driven (InHouse explicitly, Nearby automatically
+    /// via RecomputeVendorProximityCommand) rather than recomputed with Haversine on every
+    /// search. Manual rows (the pre-existing self-service coverage feature) tier as InHouse too,
+    /// preserving that feature's original "any coverage row ⇒ InHouse" behavior.
     /// </summary>
-    private async Task<IReadOnlyList<VendorDto>> ApplyTiersAsync(List<VendorDto> results, Guid residentSocietyId, CancellationToken cancellationToken)
+    private async Task<List<VendorDto>> ApplyTiersAndSortAsync(List<VendorDto> results, Guid residentSocietyId, CancellationToken cancellationToken)
     {
-        var allCoverage = await _coverageRepository.GetAllAsync(cancellationToken);
-        var societies = await _societyRepository.GetActiveAsync(cancellationToken);
-        var societyLocationsById = societies.ToDictionary(s => s.Id.Value, s => s.GeoLocation);
-
-        var coverageByVendor = allCoverage
-            .GroupBy(c => c.VendorId.Value)
-            .ToDictionary(g => g.Key, g => g.Select(c => c.SocietyId.Value).ToList());
-
-        societyLocationsById.TryGetValue(residentSocietyId, out var residentLocation);
+        var coverageForSociety = await _coverageRepository.GetAllForSocietyAsync(new SocietyId(residentSocietyId), cancellationToken);
+        var tierByVendorId = coverageForSociety.ToDictionary(
+            c => c.VendorId.Value,
+            c => c.AffiliationType == AffiliationType.Nearby ? TierNearby : TierInHouse);
 
         return results
-            .Select(dto => dto with { Tier = ClassifyTier(dto.Id, residentSocietyId, residentLocation, coverageByVendor, societyLocationsById) })
+            .Select(dto => dto with { Tier = tierByVendorId.GetValueOrDefault(dto.Id, TierOther) })
+            .OrderBy(dto => TierOrdinal(dto.Tier))
             .ToList();
     }
 
-    private static string ClassifyTier(
-        Guid vendorId,
-        Guid residentSocietyId,
-        GeoLocation? residentLocation,
-        IReadOnlyDictionary<Guid, List<Guid>> coverageByVendor,
-        IReadOnlyDictionary<Guid, GeoLocation?> societyLocationsById)
+    private static int TierOrdinal(string tier) => tier switch
     {
-        if (!coverageByVendor.TryGetValue(vendorId, out var coveredSocietyIds) || coveredSocietyIds.Count == 0)
-            return TierOther;
-
-        if (coveredSocietyIds.Contains(residentSocietyId))
-            return TierInHouse;
-
-        if (residentLocation is null)
-            return TierOther;
-
-        foreach (var societyId in coveredSocietyIds)
-        {
-            if (societyLocationsById.TryGetValue(societyId, out var location) && location is not null
-                && HaversineDistanceKm(residentLocation, location) <= NearbyRadiusKm)
-                return TierNearby;
-        }
-
-        return TierOther;
-    }
-
-    private static double HaversineDistanceKm(GeoLocation a, GeoLocation b)
-    {
-        const double earthRadiusKm = 6371.0;
-        var dLat = ToRadians(b.Latitude - a.Latitude);
-        var dLon = ToRadians(b.Longitude - a.Longitude);
-        var lat1 = ToRadians(a.Latitude);
-        var lat2 = ToRadians(b.Latitude);
-
-        var h = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                Math.Cos(lat1) * Math.Cos(lat2) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-        var c = 2 * Math.Atan2(Math.Sqrt(h), Math.Sqrt(1 - h));
-
-        return earthRadiusKm * c;
-    }
-
-    private static double ToRadians(double degrees) => degrees * Math.PI / 180.0;
+        TierInHouse => 0,
+        TierNearby => 1,
+        _ => 2
+    };
 }

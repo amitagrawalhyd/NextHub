@@ -13,15 +13,27 @@
     <ScrollView>
         <VerticalStackLayout Padding="16" Spacing="16">
 
-            <VerticalStackLayout Spacing="4" BindingContext="{Binding Vendor}" x:DataType="vendorDtos:VendorDto">
-                <Label Text="{Binding BusinessName}" FontSize="22" FontAttributes="Bold" />
-                <Label Text="{Binding Bio}" TextColor="{StaticResource Gray500}" />
-                <HorizontalStackLayout Spacing="4">
-                    <Image Source="icon_shield" HeightRequest="15" WidthRequest="15" VerticalOptions="Center" />
-                    <Label Text="{Binding TrustBadgeStatus, Converter={StaticResource TrustBadgeFormatConverter}}" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <Label Text="{Binding AverageRating, Converter={StaticResource AverageRatingFormatConverter}}" />
-            </VerticalStackLayout>
+            <HorizontalStackLayout Spacing="14" BindingContext="{Binding Vendor}" x:DataType="vendorDtos:VendorDto">
+                <Grid WidthRequest="72" HeightRequest="72" VerticalOptions="Start">
+                    <Border StrokeShape="RoundRectangle 36" Padding="0" IsVisible="{Binding LogoUrl, Converter={StaticResource StringNotEmptyConverter}}">
+                        <Image Source="{Binding LogoUrl}" Aspect="AspectFill" HeightRequest="72" WidthRequest="72" />
+                    </Border>
+                    <Border StrokeShape="RoundRectangle 36" Padding="0" StrokeThickness="0"
+                            BackgroundColor="{Binding PrimaryCategory, Converter={StaticResource CategoryToColorConverter}}"
+                            IsVisible="{Binding LogoUrl, Converter={StaticResource StringIsEmptyConverter}}">
+                        <Label Text="{Binding PrimaryCategory, Converter={StaticResource CategoryToEmojiConverter}}" FontSize="32" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+                </Grid>
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding BusinessName}" FontSize="22" FontAttributes="Bold" />
+                    <Label Text="{Binding Bio}" TextColor="{StaticResource Gray500}" />
+                    <HorizontalStackLayout Spacing="4">
+                        <Image Source="icon_shield" HeightRequest="15" WidthRequest="15" VerticalOptions="Center" />
+                        <Label Text="{Binding TrustBadgeStatus, Converter={StaticResource TrustBadgeFormatConverter}}" TextColor="{StaticResource NestHubOrange}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding AverageRating, Converter={StaticResource AverageRatingFormatConverter}}" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
 
             <HorizontalStackLayout Spacing="12">
                 <Button Text="{Binding [CallButton], Source={x:Static strings:LocalizationResourceManager.Instance}}" ImageSource="icon_call" ContentLayout="Left,8" Command="{Binding CallCommand}" BackgroundColor="{StaticResource NestHubNavy}" />

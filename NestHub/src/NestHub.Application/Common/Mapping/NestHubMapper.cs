@@ -18,6 +18,7 @@ namespace NestHub.Application.Common.Mapping;
 public static partial class NestHubMapper
 {
     [MapperIgnoreSource(nameof(Society.DomainEvents))]
+    [MapperIgnoreSource(nameof(Society.Location))]
     public static partial SocietyDto ToDto(this Society society);
 
     [MapperIgnoreSource(nameof(Resident.DomainEvents))]
@@ -26,6 +27,7 @@ public static partial class NestHubMapper
     public static partial ServiceDto ToDto(this Service service);
 
     [MapperIgnoreSource(nameof(Vendor.DomainEvents))]
+    [MapperIgnoreSource(nameof(Vendor.Location))]
     public static partial VendorDto ToDto(this Vendor vendor);
 
     [MapperIgnoreSource(nameof(Review.DomainEvents))]

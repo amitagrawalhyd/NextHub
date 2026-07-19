@@ -239,6 +239,12 @@
   <data name="BusinessNamePlaceholder" xml:space="preserve">
     <value>व्यवसायाचे नाव</value>
   </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>अक्षांश (ऐच्छिक)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>रेखांश (ऐच्छिक)</value>
+  </data>
   <data name="WhatsAppNumberPlaceholder" xml:space="preserve">
     <value>व्हॉट्सअॅप नंबर</value>
   </data>

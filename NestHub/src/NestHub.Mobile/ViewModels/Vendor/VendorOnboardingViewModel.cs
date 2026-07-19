@@ -40,6 +40,17 @@ public sealed partial class VendorOnboardingViewModel : ObservableObject
     [ObservableProperty]
     private string _bio = string.Empty;
 
+    /// <summary>
+    /// Plain coordinate entry (no map SDK dependency), same pattern as the Admin portal's
+    /// Society/Vendor location edit forms. A future interactive map pin-drop would replace
+    /// these two Entry fields without needing to change RegisterVendorCommand's shape.
+    /// </summary>
+    [ObservableProperty]
+    private string _latitude = string.Empty;
+
+    [ObservableProperty]
+    private string _longitude = string.Empty;
+
     [ObservableProperty]
     private bool _isBusy;
 
@@ -61,7 +72,9 @@ public sealed partial class VendorOnboardingViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            var vendor = await _apiClient.RegisterVendorAsync(new RegisterVendorCommand(_authSession.UserId!.Value, BusinessName, WhatsAppNumber, Bio));
+            double? latitude = double.TryParse(Latitude, out var lat) ? lat : null;
+            double? longitude = double.TryParse(Longitude, out var lng) ? lng : null;
+            var vendor = await _apiClient.RegisterVendorAsync(new RegisterVendorCommand(_authSession.UserId!.Value, BusinessName, WhatsAppNumber, Bio, latitude, longitude));
 
             var coveredSocietyIds = Societies.Where(s => s.IsSelected).Select(s => s.Society.Id).ToList();
             if (coveredSocietyIds.Count > 0)

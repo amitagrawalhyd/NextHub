@@ -97,7 +97,7 @@ public class VendorTests
         var vendor = CreateApprovedVendor();
         var newWhatsAppNumber = PhoneNumber.Create("9123456780");
 
-        vendor.UpdateProfile("Sharma Plumbing & Electrical", "Now also doing electrical work.", "https://example.com/logo.png", newWhatsAppNumber, vendor.OperatingHours);
+        vendor.UpdateProfile("Sharma Plumbing & Electrical", "Now also doing electrical work.", "https://example.com/logo.png", newWhatsAppNumber, vendor.OperatingHours, null);
 
         vendor.BusinessName.Should().Be("Sharma Plumbing & Electrical");
         vendor.Bio.Should().Be("Now also doing electrical work.");
@@ -110,8 +110,47 @@ public class VendorTests
     {
         var vendor = CreateApprovedVendor();
 
-        var act = () => vendor.UpdateProfile(" ", null, null, vendor.WhatsAppNumber, vendor.OperatingHours);
+        var act = () => vendor.UpdateProfile(" ", null, null, vendor.WhatsAppNumber, vendor.OperatingHours, null);
 
         act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void UpdateProfile_WithNewLocation_SetsGeoLocationAndRaisesVendorLocationChangedDomainEvent()
+    {
+        var vendor = CreateApprovedVendor();
+        var location = GeoLocation.Create(17.4448, 78.3498);
+
+        vendor.UpdateProfile(vendor.BusinessName, vendor.Bio, vendor.LogoUrl, vendor.WhatsAppNumber, vendor.OperatingHours, location);
+
+        vendor.GeoLocation.Should().NotBeNull();
+        vendor.GeoLocation!.Latitude.Should().Be(17.4448);
+        vendor.GeoLocation.Longitude.Should().Be(78.3498);
+        vendor.DomainEvents.Should().ContainSingle(e => e is VendorLocationChangedDomainEvent);
+    }
+
+    [Fact]
+    public void UpdateProfile_CalledTwiceWithSameLocation_RaisesLocationChangedEventOnlyOnce()
+    {
+        var vendor = CreateApprovedVendor();
+        var location = GeoLocation.Create(17.4448, 78.3498);
+
+        vendor.UpdateProfile(vendor.BusinessName, vendor.Bio, vendor.LogoUrl, vendor.WhatsAppNumber, vendor.OperatingHours, location);
+        vendor.ClearDomainEvents();
+
+        // Same coordinates again, only the bio changes — should not raise a second location event.
+        vendor.UpdateProfile(vendor.BusinessName, "Updated bio only.", vendor.LogoUrl, vendor.WhatsAppNumber, vendor.OperatingHours, location);
+
+        vendor.DomainEvents.Should().NotContain(e => e is VendorLocationChangedDomainEvent);
+    }
+
+    [Fact]
+    public void UpdateProfile_WithoutLocationChange_DoesNotRaiseVendorLocationChangedDomainEvent()
+    {
+        var vendor = CreateApprovedVendor();
+
+        vendor.UpdateProfile("Sharma Plumbing & Electrical", vendor.Bio, vendor.LogoUrl, vendor.WhatsAppNumber, vendor.OperatingHours, null);
+
+        vendor.DomainEvents.Should().NotContain(e => e is VendorLocationChangedDomainEvent);
     }
 }

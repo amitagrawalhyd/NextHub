@@ -21,6 +21,11 @@ GO
 USE [NestHub];
 GO
 
+-- Required for spatial indexes and filtered indexes (both used below) — sqlcmd's default is
+-- OFF, which fails with "CREATE INDEX failed because ... QUOTED_IDENTIFIER" otherwise.
+SET QUOTED_IDENTIFIER ON;
+GO
+
 -- =============================================================================
 -- Societies
 -- =============================================================================
@@ -32,10 +37,12 @@ BEGIN
         Name             NVARCHAR(200)    NOT NULL,
         Address          NVARCHAR(500)    NOT NULL,
         City             NVARCHAR(100)    NOT NULL CONSTRAINT DF_Societies_City DEFAULT (N'Hyderabad'),
-        GeoLocation      NVARCHAR(64)     NULL,
+        Location         GEOGRAPHY        NULL,
         IsActive         BIT              NOT NULL CONSTRAINT DF_Societies_IsActive DEFAULT (1),
         CreatedDateTime  DATETIME2        NOT NULL CONSTRAINT DF_Societies_CreatedDateTime DEFAULT (SYSUTCDATETIME())
     );
+
+    CREATE SPATIAL INDEX SIX_Societies_Location ON dbo.Societies (Location) USING GEOGRAPHY_AUTO_GRID;
 END;
 GO
 
@@ -116,10 +123,12 @@ BEGIN
         TrustBadgeStatus    NVARCHAR(30)     NOT NULL CONSTRAINT CK_Vendors_TrustBadgeStatus CHECK (TrustBadgeStatus IN (N'None', N'IdVerified', N'SocietyRegular')),
         AverageRating       DECIMAL(3,2)     NOT NULL CONSTRAINT DF_Vendors_AverageRating DEFAULT (0),
         IsApproved          BIT              NOT NULL CONSTRAINT DF_Vendors_IsApproved DEFAULT (0),
+        Location            GEOGRAPHY        NULL,
         CONSTRAINT FK_Vendors_Users_UserId FOREIGN KEY (UserId) REFERENCES dbo.Users (Id) ON DELETE CASCADE
     );
 
     CREATE UNIQUE INDEX UX_Vendors_UserId ON dbo.Vendors (UserId);
+    CREATE SPATIAL INDEX SIX_Vendors_Location ON dbo.Vendors (Location) USING GEOGRAPHY_AUTO_GRID;
 END;
 GO
 
@@ -250,14 +259,20 @@ IF OBJECT_ID(N'dbo.VendorSocietyCoverages', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.VendorSocietyCoverages
     (
-        Id         UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorSocietyCoverages PRIMARY KEY,
-        VendorId   UNIQUEIDENTIFIER NOT NULL,
-        SocietyId  UNIQUEIDENTIFIER NOT NULL,
+        Id              UNIQUEIDENTIFIER NOT NULL CONSTRAINT PK_VendorSocietyCoverages PRIMARY KEY,
+        VendorId        UNIQUEIDENTIFIER NOT NULL,
+        SocietyId       UNIQUEIDENTIFIER NOT NULL,
+        AffiliationType NVARCHAR(20)     NOT NULL CONSTRAINT DF_VendorSocietyCoverages_AffiliationType DEFAULT (N'Manual')
+                                          CONSTRAINT CK_VendorSocietyCoverages_AffiliationType CHECK (AffiliationType IN (N'Manual', N'InHouse', N'Nearby')),
         CONSTRAINT FK_VendorSocietyCoverages_Vendors_VendorId FOREIGN KEY (VendorId) REFERENCES dbo.Vendors (Id) ON DELETE CASCADE,
         CONSTRAINT FK_VendorSocietyCoverages_Societies_SocietyId FOREIGN KEY (SocietyId) REFERENCES dbo.Societies (Id)
     );
 
     CREATE UNIQUE INDEX UX_VendorSocietyCoverages_VendorId_SocietyId ON dbo.VendorSocietyCoverages (VendorId, SocietyId);
+
+    -- At most one InHouse row per vendor (a vendor has at most one "home" society).
+    CREATE UNIQUE INDEX UX_VendorSocietyCoverages_Vendor_InHouse ON dbo.VendorSocietyCoverages (VendorId)
+        WHERE AffiliationType = N'InHouse';
 END;
 GO
 
@@ -395,5 +410,69 @@ BEGIN
     );
 
     CREATE UNIQUE INDEX UX_VendorMutes_ResidentId_VendorId ON dbo.VendorMutes (ResidentId, VendorId);
+END;
+GO
+
+-- =============================================================================
+-- Vendor/Society geography Location + VendorSocietyCoverages.AffiliationType
+-- (proximity-aware vendor search: InHouse = explicit affiliation, Nearby = auto-computed
+-- from the vendor's own pin against every society's Location, both persisted here instead
+-- of recomputed per search. Location replaces the old packed "lat,lng" nvarchar GeoLocation
+-- column on Societies with a real spatial type + index.)
+-- =============================================================================
+IF COL_LENGTH(N'dbo.Societies', N'Location') IS NULL
+BEGIN
+    ALTER TABLE dbo.Societies ADD Location GEOGRAPHY NULL;
+
+    -- Backfill from the packed "lat,lng" column before dropping it. Wrapped in dynamic SQL
+    -- because T-SQL resolves column names in an UPDATE at parse time even inside a guarded IF
+    -- block, and GeoLocation no longer exists on a fresh install (or after this block has
+    -- already run once) — a bare reference to it would fail to compile in that case.
+    IF COL_LENGTH(N'dbo.Societies', N'GeoLocation') IS NOT NULL
+    BEGIN
+        EXEC(N'
+            UPDATE dbo.Societies
+            SET Location = geography::Point(
+                CAST(LEFT(GeoLocation, CHARINDEX('','', GeoLocation) - 1) AS FLOAT),
+                CAST(SUBSTRING(GeoLocation, CHARINDEX('','', GeoLocation) + 1, LEN(GeoLocation)) AS FLOAT),
+                4326)
+            WHERE GeoLocation IS NOT NULL;
+        ');
+
+        ALTER TABLE dbo.Societies DROP COLUMN GeoLocation;
+    END;
+
+    CREATE SPATIAL INDEX SIX_Societies_Location ON dbo.Societies (Location) USING GEOGRAPHY_AUTO_GRID;
+END;
+GO
+
+IF COL_LENGTH(N'dbo.Vendors', N'Location') IS NULL
+BEGIN
+    ALTER TABLE dbo.Vendors ADD Location GEOGRAPHY NULL;
+    CREATE SPATIAL INDEX SIX_Vendors_Location ON dbo.Vendors (Location) USING GEOGRAPHY_AUTO_GRID;
+END;
+GO
+
+-- Split into separate batches: T-SQL resolves column names in a CHECK constraint / filtered
+-- index WHERE clause at compile time for the whole batch, even inside a guarded IF, so a
+-- column added earlier in the SAME batch isn't visible yet to a later statement in it.
+IF COL_LENGTH(N'dbo.VendorSocietyCoverages', N'AffiliationType') IS NULL
+BEGIN
+    ALTER TABLE dbo.VendorSocietyCoverages ADD AffiliationType NVARCHAR(20) NOT NULL
+        CONSTRAINT DF_VendorSocietyCoverages_AffiliationType DEFAULT (N'Manual');
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_VendorSocietyCoverages_AffiliationType')
+BEGIN
+    ALTER TABLE dbo.VendorSocietyCoverages ADD CONSTRAINT CK_VendorSocietyCoverages_AffiliationType
+        CHECK (AffiliationType IN (N'Manual', N'InHouse', N'Nearby'));
+END;
+GO
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.VendorSocietyCoverages') AND name = N'UX_VendorSocietyCoverages_Vendor_InHouse')
+BEGIN
+    CREATE UNIQUE INDEX UX_VendorSocietyCoverages_Vendor_InHouse ON dbo.VendorSocietyCoverages (VendorId)
+        WHERE AffiliationType = N'InHouse';
 END;
 GO

@@ -1,7 +1,13 @@
+using NetTopologySuite;
+using NetTopologySuite.Geometries;
+
 namespace NestHub.Domain.ValueObjects;
 
 public sealed record GeoLocation
 {
+    private const int Wgs84Srid = 4326;
+    private static readonly GeometryFactory Factory = NtsGeometryServices.Instance.CreateGeometryFactory(Wgs84Srid);
+
     public double Latitude { get; }
     public double Longitude { get; }
 
@@ -20,4 +26,13 @@ public sealed record GeoLocation
 
         return new GeoLocation(latitude, longitude);
     }
+
+    /// <summary>
+    /// NetTopologySuite's Point convention is (X, Y) = (Longitude, Latitude) — the inverse of
+    /// how everyone reads/writes coordinates in this codebase. Centralizing the axis swap here
+    /// means it only has to be gotten right once.
+    /// </summary>
+    public Point ToPoint() => Factory.CreatePoint(new Coordinate(Longitude, Latitude));
+
+    public static GeoLocation FromPoint(Point point) => Create(point.Y, point.X);
 }

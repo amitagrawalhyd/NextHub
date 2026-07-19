@@ -4,6 +4,7 @@ using NestHub.Application.Analytics.Commands.RecordAnalyticsEvent;
 using NestHub.Application.Analytics.Dtos;
 using NestHub.Application.Announcements.Dtos;
 using NestHub.Application.Categories.Dtos;
+using NestHub.Application.Common.Models;
 using NestHub.Application.EmergencyContacts.Dtos;
 using NestHub.Application.Residents.Dtos;
 using NestHub.Application.Residents.Commands.RegisterResident;
@@ -100,13 +101,13 @@ public sealed class ApiClient
         return (await response.Content.ReadFromJsonAsync<VendorDto>())!;
     }
 
-    public async Task<IReadOnlyList<VendorDto>> SearchVendorsAsync(string? query, string? category, Guid? residentSocietyId = null)
+    public async Task<PagedResult<VendorDto>> SearchVendorsAsync(string? query, string? category, Guid? residentSocietyId = null, int page = 1, int pageSize = 20)
     {
         ApplyAuthHeader();
-        var url = $"api/vendors/search?query={Uri.EscapeDataString(query ?? string.Empty)}&category={Uri.EscapeDataString(category ?? string.Empty)}";
+        var url = $"api/vendors/search?query={Uri.EscapeDataString(query ?? string.Empty)}&category={Uri.EscapeDataString(category ?? string.Empty)}&page={page}&pageSize={pageSize}";
         if (residentSocietyId is not null)
             url += $"&residentSocietyId={residentSocietyId}";
-        return (await _httpClient.GetFromJsonAsync<List<VendorDto>>(url)) ?? new();
+        return (await _httpClient.GetFromJsonAsync<PagedResult<VendorDto>>(url)) ?? new PagedResult<VendorDto>(new List<VendorDto>(), page, pageSize, 0);
     }
 
     public async Task<VendorDto> GetVendorProfileAsync(Guid vendorId)

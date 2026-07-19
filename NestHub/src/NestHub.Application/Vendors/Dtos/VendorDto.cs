@@ -1,3 +1,6 @@
+using NestHub.Application.Societies.Dtos;
+using NestHub.Application.Vendors.Common;
+
 namespace NestHub.Application.Vendors.Dtos;
 
 public sealed record DailyHoursDto(TimeOnly? OpensAt, TimeOnly? ClosesAt, bool IsClosed);
@@ -18,4 +21,13 @@ public sealed record VendorDto(
     bool IsApproved,
     bool IsFeatured,
     IReadOnlyList<ServiceDto> Services,
-    string Tier = "Other");
+    GeoLocationDto? GeoLocation = null,
+    string Tier = "Other")
+{
+    /// <summary>
+    /// Computed, not persisted — derived fresh from BusinessName/Bio/Services every time a
+    /// VendorDto is built (via ToDto() or a `with` expression), so every existing call site
+    /// gets it for free with no changes needed anywhere they construct a VendorDto.
+    /// </summary>
+    public string PrimaryCategory => VendorCategoryClassifier.Classify(BusinessName, Bio, Services.Select(s => s.Category));
+}

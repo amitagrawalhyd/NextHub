@@ -1,5 +1,6 @@
 using NestHub.Domain.Common;
 using NestHub.Domain.ValueObjects;
+using NetTopologySuite.Geometries;
 
 namespace NestHub.Domain.Societies;
 
@@ -8,9 +9,16 @@ public sealed class Society : AggregateRoot<SocietyId>
     public string Name { get; private set; } = null!;
     public string Address { get; private set; } = null!;
     public string City { get; private set; } = null!;
-    public GeoLocation? GeoLocation { get; private set; }
     public bool IsActive { get; private set; }
     public DateTime CreatedDateTimeUtc { get; private set; }
+
+    /// <summary>
+    /// The EF-mapped, spatially-indexed persisted column. <see cref="GeoLocation"/> below is
+    /// the business-facing façade every other layer reads/writes.
+    /// </summary>
+    public Point? Location { get; private set; }
+
+    public GeoLocation? GeoLocation => Location is null ? null : ValueObjects.GeoLocation.FromPoint(Location);
 
     private Society()
     {
@@ -22,7 +30,7 @@ public sealed class Society : AggregateRoot<SocietyId>
         Name = name;
         Address = address;
         City = city;
-        GeoLocation = geoLocation;
+        Location = geoLocation?.ToPoint();
         IsActive = true;
         CreatedDateTimeUtc = DateTime.UtcNow;
     }
@@ -50,7 +58,7 @@ public sealed class Society : AggregateRoot<SocietyId>
 
         Name = name.Trim();
         Address = address.Trim();
-        GeoLocation = geoLocation;
+        Location = geoLocation?.ToPoint();
     }
 
     public void Activate() => IsActive = true;

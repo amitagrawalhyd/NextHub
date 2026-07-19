@@ -12,7 +12,7 @@ public sealed class NestHubDbContextFactory : IDesignTimeDbContextFactory<NestHu
     public NestHubDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<NestHubDbContext>();
-        optionsBuilder.UseSqlServer("Server=AMIT-AGRAWAL-PM;Database=NestHub;Trusted_Connection=True;TrustServerCertificate=True;");
+        optionsBuilder.UseSqlServer("Server=AMIT-AGRAWAL-PM;Database=NestHub;Trusted_Connection=True;TrustServerCertificate=True;", sql => sql.UseNetTopologySuite());
 
         return new NestHubDbContext(optionsBuilder.Options);
     }

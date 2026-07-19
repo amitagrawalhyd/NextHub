@@ -25,10 +25,10 @@ DECLARE @AlwaysOpenJson NVARCHAR(MAX) = N'{"Sunday":{"OpensAt":"00:00:00","Close
 -- =============================================================================
 IF NOT EXISTS (SELECT 1 FROM Societies WHERE Id = '11111111-1111-1111-1111-111111111001')
 BEGIN
-    INSERT INTO Societies (Id, Name, Address, City, GeoLocation, IsActive, CreatedDateTime) VALUES
-    ('11111111-1111-1111-1111-111111111001', N'Lakeview Residency', N'Gachibowli, Hyderabad', N'Hyderabad', '17.4448,78.3498', 1, SYSUTCDATETIME()),
-    ('11111111-1111-1111-1111-111111111002', N'Green Meadows',      N'Kondapur, Hyderabad',   N'Hyderabad', '17.4615,78.363',  1, SYSUTCDATETIME()),
-    ('11111111-1111-1111-1111-111111111003', N'My Home Bhooja',     N'Kokapet, Hyderabad',    N'Hyderabad', '17.4045,78.321',  1, SYSUTCDATETIME());
+    INSERT INTO Societies (Id, Name, Address, City, Location, IsActive, CreatedDateTime) VALUES
+    ('11111111-1111-1111-1111-111111111001', N'Lakeview Residency', N'Gachibowli, Hyderabad', N'Hyderabad', geography::Point(17.4448, 78.3498, 4326), 1, SYSUTCDATETIME()),
+    ('11111111-1111-1111-1111-111111111002', N'Green Meadows',      N'Kondapur, Hyderabad',   N'Hyderabad', geography::Point(17.4615, 78.363, 4326),  1, SYSUTCDATETIME()),
+    ('11111111-1111-1111-1111-111111111003', N'My Home Bhooja',     N'Kokapet, Hyderabad',    N'Hyderabad', geography::Point(17.4045, 78.321, 4326),  1, SYSUTCDATETIME());
 END;
 GO
 
@@ -99,14 +99,18 @@ BEGIN
     ('22222222-2222-2222-2222-222222222204', N'9000000204', NULL, @PasswordHash, N'Vendor', 1, 1, SYSUTCDATETIME()),
     ('22222222-2222-2222-2222-222222222205', N'9000000205', NULL, @PasswordHash, N'Vendor', 1, 1, SYSUTCDATETIME());
 
-    -- Approved vendors (Sharma Plumbing = Premium + IdVerified; BrightSpark = Free + SocietyRegular; GreenLeaf, MathGenius = Free/None)
-    INSERT INTO Vendors (Id, UserId, BusinessName, LogoUrl, Bio, WhatsAppNumber, OperatingHoursJson, SubscriptionTier, TrustBadgeStatus, AverageRating, IsApproved) VALUES
-    ('44444444-4444-4444-4444-444444444201', '22222222-2222-2222-2222-222222222201', N'Sharma Plumbing Works',    NULL, N'24x7 reliable plumbing services across Hyderabad.',       N'9876543210', @AlwaysOpenJson, N'Premium', N'IdVerified',     4.5, 1),
-    ('44444444-4444-4444-4444-444444444202', '22222222-2222-2222-2222-222222222202', N'BrightSpark Electricians', NULL, N'Licensed electricians for home and society wiring.',     N'9876543211', @AlwaysOpenJson, N'Free',    N'SocietyRegular', 5.0, 1),
-    ('44444444-4444-4444-4444-444444444203', '22222222-2222-2222-2222-222222222203', N'GreenLeaf Pest Control',   NULL, N'Eco-friendly pest control for apartments.',              N'9876543212', @AlwaysOpenJson, N'Free',    N'None',           0.0, 1),
-    ('44444444-4444-4444-4444-444444444204', '22222222-2222-2222-2222-222222222204', N'MathGenius Tutoring',      NULL, N'Home tuition for grades 6-12, Math and Science.',        N'9876543213', @AlwaysOpenJson, N'Premium', N'IdVerified',     5.0, 1),
+    -- Approved vendors (Sharma Plumbing = Premium + IdVerified; BrightSpark = Free + SocietyRegular; GreenLeaf, MathGenius = Free/None).
+    -- Location values reproduce every proximity tier: Sharma/GreenLeaf sit on their home
+    -- society's own pin (InHouse, set explicitly below in VendorSocietyCoverages);
+    -- BrightSpark/MathGenius sit a few km away (auto-Nearby distance); QuickFix sits ~27km
+    -- from every society (Other/far).
+    INSERT INTO Vendors (Id, UserId, BusinessName, LogoUrl, Bio, WhatsAppNumber, OperatingHoursJson, SubscriptionTier, TrustBadgeStatus, AverageRating, IsApproved, Location) VALUES
+    ('44444444-4444-4444-4444-444444444201', '22222222-2222-2222-2222-222222222201', N'Sharma Plumbing Works',    NULL, N'24x7 reliable plumbing services across Hyderabad.',       N'9876543210', @AlwaysOpenJson, N'Premium', N'IdVerified',     4.5, 1, geography::Point(17.4448, 78.3498, 4326)),
+    ('44444444-4444-4444-4444-444444444202', '22222222-2222-2222-2222-222222222202', N'BrightSpark Electricians', NULL, N'Licensed electricians for home and society wiring.',     N'9876543211', @AlwaysOpenJson, N'Free',    N'SocietyRegular', 5.0, 1, geography::Point(17.4700, 78.3300, 4326)),
+    ('44444444-4444-4444-4444-444444444203', '22222222-2222-2222-2222-222222222203', N'GreenLeaf Pest Control',   NULL, N'Eco-friendly pest control for apartments.',              N'9876543212', @AlwaysOpenJson, N'Free',    N'None',           0.0, 1, geography::Point(17.4045, 78.3210, 4326)),
+    ('44444444-4444-4444-4444-444444444204', '22222222-2222-2222-2222-222222222204', N'MathGenius Tutoring',      NULL, N'Home tuition for grades 6-12, Math and Science.',        N'9876543213', @AlwaysOpenJson, N'Premium', N'IdVerified',     5.0, 1, geography::Point(17.4200, 78.3000, 4326)),
     -- Pending approval — use this one to test the Admin "Vendor Onboarding Queue"
-    ('44444444-4444-4444-4444-444444444205', '22222222-2222-2222-2222-222222222205', N'QuickFix Appliance Repair', NULL, N'Awaiting approval — new to NestHub.',                   N'9876543214', @AlwaysOpenJson, N'Free',    N'None',           0.0, 0);
+    ('44444444-4444-4444-4444-444444444205', '22222222-2222-2222-2222-222222222205', N'QuickFix Appliance Repair', NULL, N'Awaiting approval — new to NestHub.',                   N'9876543214', @AlwaysOpenJson, N'Free',    N'None',           0.0, 0, geography::Point(17.3000, 78.5500, 4326));
 
     INSERT INTO Services (Id, VendorId, Title, Description, PricingJson, Category) VALUES
     ('55555555-5555-5555-5555-555555555201', '44444444-4444-4444-4444-444444444201', N'Tap & Pipe Repair', N'Fix leaking taps and pipes.',      N'{"Type":3,"Amount":300,"Currency":"INR"}',   N'Plumbing'),
@@ -114,6 +118,21 @@ BEGIN
     ('55555555-5555-5555-5555-555555555203', '44444444-4444-4444-4444-444444444202', N'Wiring Repair',     N'Fix faulty wiring and switches.',   N'{"Type":2,"Amount":250,"Currency":"INR"}',   N'Electrical'),
     ('55555555-5555-5555-5555-555555555204', '44444444-4444-4444-4444-444444444203', N'General Pest Treatment', N'Cockroach and ant treatment.', N'{"Type":1,"Amount":1200,"Currency":"INR"}',  N'Pest Control'),
     ('55555555-5555-5555-5555-555555555205', '44444444-4444-4444-4444-444444444204', N'Math Tuition',      N'One-on-one math coaching.',        N'{"Type":2,"Amount":500,"Currency":"INR"}',   N'Tutors');
+END;
+GO
+
+-- =============================================================================
+-- VendorSocietyCoverages: InHouse set explicitly; Nearby computed by hand here using the same
+-- 5km radius RecomputeVendorProximityCommand applies at runtime for the Location values above.
+-- =============================================================================
+IF NOT EXISTS (SELECT 1 FROM VendorSocietyCoverages WHERE VendorId = '44444444-4444-4444-4444-444444444201')
+BEGIN
+    INSERT INTO VendorSocietyCoverages (Id, VendorId, SocietyId, AffiliationType) VALUES
+    (NEWID(), '44444444-4444-4444-4444-444444444201', '11111111-1111-1111-1111-111111111001', N'InHouse'), -- Sharma Plumbing -> Lakeview Residency
+    (NEWID(), '44444444-4444-4444-4444-444444444203', '11111111-1111-1111-1111-111111111003', N'InHouse'), -- GreenLeaf Pest Control -> My Home Bhooja
+    (NEWID(), '44444444-4444-4444-4444-444444444202', '11111111-1111-1111-1111-111111111001', N'Nearby'),  -- BrightSpark Electricians -> Lakeview Residency
+    (NEWID(), '44444444-4444-4444-4444-444444444202', '11111111-1111-1111-1111-111111111002', N'Nearby'),  -- BrightSpark Electricians -> Green Meadows
+    (NEWID(), '44444444-4444-4444-4444-444444444204', '11111111-1111-1111-1111-111111111003', N'Nearby');  -- MathGenius Tutoring -> My Home Bhooja
 END;
 GO
 

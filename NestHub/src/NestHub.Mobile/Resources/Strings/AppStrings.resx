@@ -242,6 +242,12 @@
   <data name="WhatsAppNumberPlaceholder" xml:space="preserve">
     <value>WhatsApp number</value>
   </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>Latitude (optional)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>Longitude (optional)</value>
+  </data>
   <data name="BioPlaceholder" xml:space="preserve">
     <value>Short bio / about your services</value>
   </data>

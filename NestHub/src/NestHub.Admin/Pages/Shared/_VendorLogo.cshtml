@@ -1,0 +1,14 @@
+@using NestHub.Application.Vendors.Common
+@using NestHub.Application.Vendors.Dtos
+@model VendorDto
+
+@if (!string.IsNullOrWhiteSpace(Model.LogoUrl))
+{
+    <img src="@Model.LogoUrl" alt="@Model.BusinessName logo" style="width:40px;height:40px;object-fit:cover;border-radius:50%;" />
+}
+else
+{
+    var (emoji, color) = VendorCategoryIcon.For(Model.PrimaryCategory);
+    <span title="@Model.PrimaryCategory"
+          style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;background:@color;font-size:20px;line-height:1;">@emoji</span>
+}

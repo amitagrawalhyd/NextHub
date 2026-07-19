@@ -13,6 +13,7 @@
 
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <converters:StringIsEmptyConverter x:Key="StringIsEmptyConverter" />
             <converters:TierToLabelConverter x:Key="TierToLabelConverter" />
             <converters:TierToIconConverter x:Key="TierToIconConverter" />
             <converters:TierToColorConverter x:Key="TierToColorConverter" />
@@ -23,6 +24,8 @@
             <converters:ApprovalStatusFormatConverter x:Key="ApprovalStatusFormatConverter" />
             <converters:PostedFormatConverter x:Key="PostedFormatConverter" />
             <converters:ReportedFormatConverter x:Key="ReportedFormatConverter" />
+            <converters:CategoryToEmojiConverter x:Key="CategoryToEmojiConverter" />
+            <converters:CategoryToColorConverter x:Key="CategoryToColorConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
